@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Foto - Direktori /asset/</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #f5f5f5;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .directory-info {
+            color: #aaa;
+            font-size: 1rem;
+            background-color: #1a1a1a;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            border: 1px solid #333;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .gallery-item {
+            background-color: #111;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #222;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border-color: #444;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.05);
+        }
+
+        .file-name {
+            padding: 15px;
+            font-size: 0.9rem;
+            color: #ccc;
+            text-align: center;
+            background-color: #151515;
+            border-top: 1px solid #222;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .popup-content {
+            background-color: #111;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: auto;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        .popup-header {
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            background-color: #151515;
+        }
+
+        .popup-header h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .popup-image-container {
+            padding: 30px;
+            text-align: center;
+            background-color: #0a0a0a;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-image {
+            max-width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-separator {
+            height: 1px;
+            background-color: #333;
+            margin: 0;
+            border: none;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px;
+            background-color: #151515;
+            border-top: 1px solid #333;
+        }
+
+        .popup-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            text-transform: uppercase;
+        }
+
+        .download-btn {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        .download-btn:hover {
+            background-color: #444;
+            border-color: #777;
+        }
+
+        .back-btn {
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #444;
+        }
+
+        .back-btn:hover {
+            background-color: #333;
+            border-color: #666;
+        }
+
+        .empty-gallery {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-gallery i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .empty-gallery h3 {
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #888;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #333;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 250px;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #222;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .popup-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .popup-btn {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 15px;
+            }
+            
+            .popup-content {
+                width: 95%;
+            }
+            
+            .popup-header h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Galeri Foto</h1>
+            <div class="directory-info">
+                <i class="fas fa-folder"></i> Direktori: /asset/
+            </div>
+        </header>
+        
+        <div class="gallery-grid" id="galleryContainer">
+            <!-- Gambar akan dimuat di sini -->
+        </div>
+        
+        <footer>
+            <p>Semua foto diambil dari direktori <strong>/asset/</strong> dengan format JPG</p>
+            <p>Tema: Dark Mode (Hitam, Abu-abu, Putih)</p>
+        </footer>
+    </div>
+
+    <!-- Popup Preview -->
+    <div class="popup-overlay" id="imagePopup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 id="popupFileName">Nama File</h2>
+            </div>
+            
+            <div class="popup-image-container">
+                <img class="popup-image" id="popupImage" alt="Preview Gambar">
+            </div>
+            
+            <hr class="popup-separator">
+            
+            <div class="popup-buttons">
+                <button class="popup-btn download-btn" id="downloadBtn">
+                    DOWNLOAD
+                </button>
+                <button class="popup-btn back-btn" id="closePopupBtn">
+                    KEMBALI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DAFTAR FILE JPG DI DIREKTORI /asset/
+        // Ganti dengan nama file JPG yang ada di folder Anda
+        const imageFiles = [
+            "foto1.jpg",
+            "foto2.jpg",
+            "foto3.jpg",
+            "foto4.jpg",
+            "foto5.jpg",
+            "foto6.jpg",
+            "foto7.jpg",
+            "foto8.jpg",
+            "foto9.jpg",
+            "foto10.jpg"
+        ];
+
+        // Elemen DOM
+        const galleryContainer = document.getElementById('galleryContainer');
+        const imagePopup = document.getElementById('imagePopup');
+        const popupImage = document.getElementById('popupImage');
+        const popupFileName = document.getElementById('popupFileName');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const closePopupBtn = document.getElementById('closePopupBtn');
+
+        // Variabel untuk menyimpan file yang sedang dipilih
+        let currentSelectedFile = '';
+
+        // Fungsi untuk memuat galeri
+        function loadGallery() {
+            // Kosongkan kontainer terlebih dahulu
+            galleryContainer.innerHTML = '';
+            
+            // Jika tidak ada file
+            if (imageFiles.length === 0) {
+                galleryContainer.innerHTML = `
+                    <div class="empty-gallery">
+                        <i class="fas fa-images"></i>
+                        <h3>Belum ada foto di galeri</h3>
+                        <p>Tambahkan file JPG ke direktori /asset/</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Loop melalui setiap file dan buat elemen galeri
+            imageFiles.forEach(filename => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.dataset.filename = filename;
+                
+                galleryItem.innerHTML = `
+                    <div class="image-container">
+                        <div class="image-placeholder">
+                            <i class="fas fa-image"></i> ${filename}
+                        </div>
+                    </div>
+                    <div class="file-name">${filename}</div>
+                `;
+                
+                galleryContainer.appendChild(galleryItem);
+                
+                // Coba memuat gambar
+                const img = new Image();
+                img.src = `/asset/${filename}`;
+                
+                img.onload = function() {
+                    // Ganti placeholder dengan gambar yang berhasil dimuat
+                    const imageContainer = galleryItem.querySelector('.image-container');
+                    imageContainer.innerHTML = `<img class="gallery-img" src="/asset/${filename}" alt="${filename}">`;
+                    
+                    // Tambahkan event listener untuk membuka popup
+                    imageContainer.addEventListener('click', () => openPopup(filename, img.src));
+                };
+                
+                img.onerror = function() {
+                    // Jika gambar gagal dimuat, tetap tambahkan event listener dengan placeholder
+                    const imageContainer = galleryItem.querySelector('.image-container');
+                    imageContainer.addEventListener('click', () => openPopup(filename, ''));
+                };
+                
+                // Juga tambahkan event listener ke nama file
+                galleryItem.querySelector('.file-name').addEventListener('click', () => {
+                    if (img.complete && img.naturalHeight !== 0) {
+                        openPopup(filename, img.src);
+                    } else {
+                        openPopup(filename, '');
+                    }
+                });
+            });
+        }
+
+        // Fungsi untuk membuka popup
+        function openPopup(filename, imageSrc) {
+            currentSelectedFile = filename;
+            popupFileName.textContent = filename;
+            
+            if (imageSrc) {
+                popupImage.src = imageSrc;
+                popupImage.style.display = 'block';
+                popupImage.alt = filename;
+            } else {
+                popupImage.style.display = 'none';
+                document.querySelector('.popup-image-container').innerHTML = `
+                    <div style="color: #888; font-size: 1.1rem;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
+                        Gambar tidak ditemukan di direktori /asset/
+                    </div>
+                `;
+            }
+            
+            imagePopup.style.display = 'flex';
+        }
+
+        // Fungsi untuk menutup popup
+        function closePopup() {
+            imagePopup.style.display = 'none';
+            // Reset gambar popup
+            popupImage.src = '';
+            popupImage.style.display = 'block';
+            // Kembalikan kontainer ke keadaan semula
+            document.querySelector('.popup-image-container').innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+            popupImage = document.getElementById('popupImage');
+        }
+
+        // Fungsi untuk mendownload gambar
+        function downloadImage() {
+            if (!currentSelectedFile) return;
+            
+            const link = document.createElement('a');
+            link.href = `/asset/${currentSelectedFile}`;
+            link.download = currentSelectedFile;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event Listeners
+        downloadBtn.addEventListener('click', downloadImage);
+        closePopupBtn.addEventListener('click', closePopup);
+
+        // Tutup popup saat klik di luar konten
+        imagePopup.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        // Tutup popup dengan tombol Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && imagePopup.style.display === 'flex') {
+                closePopup();
+            }
+        });
+
+        // Jalankan fungsi memuat galeri saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', loadGallery);
+        
+        // Untuk debugging
+        console.log(`Galeri dimuat. Menampilkan ${imageFiles.length} file JPG dari direktori /asset/`);
+        console.log('Daftar file:', imageFiles);
+        console.log('Catatan: Ganti array imageFiles dengan nama file JPG yang ada di folder /asset/ Anda');
+    </script>
+</body>
+</html>
