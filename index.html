@@ -14,7 +14,7 @@
         body {
             background-color: #0a0a0a;
             color: #f5f5f5;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
             padding: 20px;
         }
@@ -37,6 +37,7 @@
             color: #fff;
             letter-spacing: 1px;
             margin-bottom: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .directory-info {
@@ -48,6 +49,7 @@
             display: inline-block;
             margin-top: 10px;
             border: 1px solid #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .gallery-grid {
@@ -102,6 +104,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         /* ANIMASI POPUP BARU */
@@ -123,7 +126,7 @@
             }
             100% {
                 backdrop-filter: blur(4px);
-                background-color: rgba(0, 0, 0, 0.85);
+                background-color: rgba(0, 0, 0, 0.15);
             }
         }
 
@@ -141,7 +144,7 @@
         @keyframes overlayDisappear {
             0% {
                 backdrop-filter: blur(4px);
-                background-color: rgba(0, 0, 0, 0.85);
+                background-color: rgba(0, 0, 0, 0.15);
             }
             100% {
                 backdrop-filter: blur(0px);
@@ -149,7 +152,7 @@
             }
         }
 
-        /* Popup Styles - Efek bokeh lebih transparan */
+        /* Popup Styles - Efek bokeh lebih cerah 4x lipat */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -168,14 +171,14 @@
         }
 
         .popup-content {
-            background-color: rgba(20, 20, 20, 0.75);
+            background-color: rgba(40, 40, 40, 0.95);
             border-radius: 12px;
             width: 90%;
             max-width: 800px;
             max-height: 90vh;
             overflow: auto;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
             animation: popupAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             backdrop-filter: blur(3px);
         }
@@ -187,8 +190,8 @@
         .popup-header {
             padding: 25px;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            background-color: rgba(25, 25, 25, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(50, 50, 50, 0.95);
         }
 
         .popup-header h2 {
@@ -196,12 +199,13 @@
             font-weight: 400;
             color: #fff;
             margin-bottom: 5px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .popup-image-container {
             padding: 40px 30px 50px;
             text-align: center;
-            background-color: rgba(15, 15, 15, 0.2);
+            background-color: rgba(30, 30, 30, 0.8);
             min-height: 400px;
             display: flex;
             justify-content: center;
@@ -217,8 +221,8 @@
             right: 0;
             height: 80px;
             background: linear-gradient(to top, 
-                rgba(20, 20, 20, 0.75) 0%, 
-                rgba(20, 20, 20, 0.3) 50%, 
+                rgba(40, 40, 40, 0.95) 0%, 
+                rgba(40, 40, 40, 0.5) 50%, 
                 transparent 100%);
             pointer-events: none;
             border-radius: 0 0 12px 12px;
@@ -229,7 +233,7 @@
             max-height: 65vh;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
 
         .popup-separator {
@@ -261,6 +265,7 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             position: relative;
             z-index: 2;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .download-btn:hover {
@@ -296,6 +301,7 @@
             font-weight: 400;
             margin-bottom: 10px;
             color: #888;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         footer {
@@ -304,6 +310,7 @@
             border-top: 1px solid #333;
             color: #777;
             font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .image-placeholder {
@@ -316,6 +323,7 @@
             color: #666;
             font-size: 0.9rem;
             border-bottom: 1px solid #222;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .image-error {
@@ -329,6 +337,7 @@
             color: #ff6b6b;
             padding: 20px;
             text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .image-error i {
@@ -338,8 +347,12 @@
 
         @media (max-width: 768px) {
             .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 20px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .image-container {
+                height: 180px;
             }
             
             h1 {
@@ -363,11 +376,21 @@
             .popup-image {
                 max-height: 55vh;
             }
+            
+            .file-name {
+                padding: 10px;
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 480px) {
             .gallery-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .image-container {
+                height: 150px;
             }
             
             body {
@@ -385,6 +408,20 @@
             .download-btn {
                 padding: 12px 25px;
                 font-size: 0.9rem;
+            }
+            
+            .file-name {
+                padding: 8px;
+                font-size: 0.75rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .directory-info {
+                font-size: 0.9rem;
+                padding: 6px 12px;
             }
         }
     </style>
@@ -621,7 +658,7 @@
                     <div style="color: #ff6b6b; font-size: 1.1rem; text-align: center; padding: 40px;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i><br>
                         <strong>FILE TIDAK DITEMUKAN DI GITHUB</strong><br><br>
-                        <div style="font-size: 0.9rem; color: #aaa; background: rgba(26, 26, 26, 0.8); padding: 15px; border-radius: 5px; backdrop-filter: blur(5px);">
+                        <div style="font-size: 0.9rem; color: #aaa; background: rgba(40, 40, 40, 0.95); padding: 15px; border-radius: 5px; backdrop-filter: blur(3px); border: 1px solid rgba(255, 255, 255, 0.15);">
                             File: <strong>${filename}</strong><br>
                             Path yang dicoba: <strong>${BASE_PATH}</strong><br><br>
                             <div style="font-size: 0.8rem; color: #888;">
@@ -699,4 +736,4 @@
         console.log('==============================');
     </script>
 </body>
-    </html>
+</html>
