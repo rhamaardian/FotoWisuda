@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeri Foto - Direktori /assets/</title>
     <style>
-        /* STYLE SAMA PERSIS DENGAN SEBELUMNYA */
         * {
             margin: 0;
             padding: 0;
@@ -105,6 +104,51 @@
             white-space: nowrap;
         }
 
+        /* ANIMASI POPUP BARU */
+        @keyframes popupAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes overlayAppear {
+            0% {
+                backdrop-filter: blur(0px);
+                background-color: rgba(0, 0, 0, 0);
+            }
+            100% {
+                backdrop-filter: blur(8px);
+                background-color: rgba(0, 0, 0, 0.92);
+            }
+        }
+
+        @keyframes popupDisappear {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+        }
+
+        @keyframes overlayDisappear {
+            0% {
+                backdrop-filter: blur(8px);
+                background-color: rgba(0, 0, 0, 0.92);
+            }
+            100% {
+                backdrop-filter: blur(0px);
+                background-color: rgba(0, 0, 0, 0);
+            }
+        }
+
         /* Popup Styles */
         .popup-overlay {
             display: none;
@@ -113,34 +157,38 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.3s ease;
+            animation: overlayAppear 0.4s ease forwards;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .popup-overlay.closing {
+            animation: overlayDisappear 0.3s ease forwards;
         }
 
         .popup-content {
-            background-color: #111;
-            border-radius: 10px;
+            background-color: rgba(17, 17, 17, 0.85);
+            border-radius: 12px;
             width: 90%;
             max-width: 800px;
             max-height: 90vh;
             overflow: auto;
-            border: 1px solid #333;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: popupAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-overlay.closing .popup-content {
+            animation: popupDisappear 0.3s ease forwards;
         }
 
         .popup-header {
             padding: 25px;
             text-align: center;
-            border-bottom: 1px solid #333;
-            background-color: #151515;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(21, 21, 21, 0.7);
         }
 
         .popup-header h2 {
@@ -151,72 +199,84 @@
         }
 
         .popup-image-container {
-            padding: 30px;
+            padding: 40px 30px 50px;
             text-align: center;
-            background-color: #0a0a0a;
+            background-color: rgba(10, 10, 10, 0.3);
             min-height: 400px;
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+        }
+
+        .popup-image-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, 
+                rgba(17, 17, 17, 0.85) 0%, 
+                rgba(17, 17, 17, 0.5) 50%, 
+                transparent 100%);
+            pointer-events: none;
+            border-radius: 0 0 12px 12px;
         }
 
         .popup-image {
             max-width: 100%;
-            max-height: 60vh;
+            max-height: 65vh;
             object-fit: contain;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
         .popup-separator {
-            height: 1px;
-            background-color: #333;
-            margin: 0;
-            border: none;
+            display: none;
         }
 
+        /* TOMBOL DOWNLOAD MENGAMBANG - TOMBOL KEMBALI DIHAPUS */
         .popup-buttons {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            padding: 30px;
-            background-color: #151515;
-            border-top: 1px solid #333;
-        }
-
-        .popup-btn {
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            min-width: 180px;
-            text-transform: uppercase;
+            padding: 0 30px 30px;
+            background-color: transparent;
+            border-top: none;
+            position: relative;
+            margin-top: -50px;
         }
 
         .download-btn {
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
+            padding: 14px 35px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #111;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
         }
 
         .download-btn:hover {
-            background-color: #444;
-            border-color: #777;
+            background-color: rgba(255, 255, 255, 1);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
 
+        .download-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tombol kembali dihapus */
         .back-btn {
-            background-color: #222;
-            color: #fff;
-            border: 1px solid #444;
-        }
-
-        .back-btn:hover {
-            background-color: #333;
-            border-color: #666;
+            display: none;
         }
 
         .empty-gallery {
@@ -295,6 +355,14 @@
                 width: 100%;
                 min-width: auto;
             }
+            
+            .popup-content {
+                max-height: 85vh;
+            }
+            
+            .popup-image {
+                max-height: 55vh;
+            }
         }
 
         @media (max-width: 480px) {
@@ -312,6 +380,11 @@
             
             .popup-header h2 {
                 font-size: 1.4rem;
+            }
+            
+            .download-btn {
+                padding: 12px 25px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -347,15 +420,11 @@
                 <img class="popup-image" id="popupImage" alt="Preview Gambar">
             </div>
             
-            <hr class="popup-separator">
-            
             <div class="popup-buttons">
                 <button class="popup-btn download-btn" id="downloadBtn">
-                    DOWNLOAD
+                    <i class="fas fa-download"></i> DOWNLOAD
                 </button>
-                <button class="popup-btn back-btn" id="closePopupBtn">
-                    KEMBALI
-                </button>
+                <!-- Tombol kembali telah dihapus sesuai permintaan -->
             </div>
         </div>
     </div>
@@ -384,7 +453,6 @@
         let popupImage = document.getElementById('popupImage');
         const popupFileName = document.getElementById('popupFileName');
         const downloadBtn = document.getElementById('downloadBtn');
-        const closePopupBtn = document.getElementById('closePopupBtn');
 
         // PATH UNTUK GITHUB PAGES - SANGAT PENTING!
         // Coba otomatis deteksi jika di GitHub Pages
@@ -528,13 +596,16 @@
             });
         }
 
-        // Fungsi untuk membuka popup
+        // Fungsi untuk membuka popup dengan animasi
         function openPopup(filename, imageSrc) {
             currentSelectedFile = filename;
             currentImagePath = imageSrc;
             popupFileName.textContent = filename;
             
             const popupImageContainer = document.querySelector('.popup-image-container');
+            
+            // Hapus class closing jika ada
+            imagePopup.classList.remove('closing');
             
             if (imageSrc) {
                 // Pastikan elemen popupImage ada
@@ -550,7 +621,7 @@
                     <div style="color: #ff6b6b; font-size: 1.1rem; text-align: center; padding: 40px;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i><br>
                         <strong>FILE TIDAK DITEMUKAN DI GITHUB</strong><br><br>
-                        <div style="font-size: 0.9rem; color: #aaa; background: #1a1a1a; padding: 15px; border-radius: 5px;">
+                        <div style="font-size: 0.9rem; color: #aaa; background: rgba(26, 26, 26, 0.8); padding: 15px; border-radius: 5px; backdrop-filter: blur(5px);">
                             File: <strong>${filename}</strong><br>
                             Path yang dicoba: <strong>${BASE_PATH}</strong><br><br>
                             <div style="font-size: 0.8rem; color: #888;">
@@ -569,11 +640,17 @@
             imagePopup.style.display = 'flex';
         }
 
-        // Fungsi untuk menutup popup
+        // Fungsi untuk menutup popup dengan animasi
         function closePopup() {
-            imagePopup.style.display = 'none';
-            currentSelectedFile = '';
-            currentImagePath = '';
+            imagePopup.classList.add('closing');
+            
+            // Tunggu animasi selesai sebelum menyembunyikan
+            setTimeout(() => {
+                imagePopup.style.display = 'none';
+                imagePopup.classList.remove('closing');
+                currentSelectedFile = '';
+                currentImagePath = '';
+            }, 300); // Sesuaikan dengan durasi animasi
         }
 
         // Fungsi untuk mendownload gambar
@@ -594,7 +671,8 @@
 
         // Event Listeners
         downloadBtn.addEventListener('click', downloadImage);
-        closePopupBtn.addEventListener('click', closePopup);
+        
+        // Tombol kembali telah dihapus sesuai permintaan
 
         // Tutup popup saat klik di luar konten
         imagePopup.addEventListener('click', function(e) {
