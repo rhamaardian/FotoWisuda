@@ -108,7 +108,7 @@
         @keyframes popupAppear {
             0% {
                 opacity: 0;
-                transform: scale(0.8) translateY(20px);
+                transform: scale(0.9) translateY(20px);
             }
             100% {
                 opacity: 1;
@@ -122,8 +122,8 @@
                 background-color: rgba(0, 0, 0, 0);
             }
             100% {
-                backdrop-filter: blur(8px);
-                background-color: rgba(0, 0, 0, 0.92);
+                backdrop-filter: blur(4px);
+                background-color: rgba(0, 0, 0, 0.85);
             }
         }
 
@@ -134,14 +134,14 @@
             }
             100% {
                 opacity: 0;
-                transform: scale(0.9) translateY(20px);
+                transform: scale(0.95) translateY(10px);
             }
         }
 
         @keyframes overlayDisappear {
             0% {
-                backdrop-filter: blur(8px);
-                background-color: rgba(0, 0, 0, 0.92);
+                backdrop-filter: blur(4px);
+                background-color: rgba(0, 0, 0, 0.85);
             }
             100% {
                 backdrop-filter: blur(0px);
@@ -149,7 +149,7 @@
             }
         }
 
-        /* Popup Styles */
+        /* Popup Styles - Efek bokeh lebih transparan */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -168,16 +168,16 @@
         }
 
         .popup-content {
-            background-color: rgba(17, 17, 17, 0.85);
+            background-color: rgba(20, 20, 20, 0.75);
             border-radius: 12px;
             width: 90%;
             max-width: 800px;
             max-height: 90vh;
             overflow: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
             animation: popupAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(3px);
         }
 
         .popup-overlay.closing .popup-content {
@@ -187,8 +187,8 @@
         .popup-header {
             padding: 25px;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background-color: rgba(21, 21, 21, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: rgba(25, 25, 25, 0.6);
         }
 
         .popup-header h2 {
@@ -201,7 +201,7 @@
         .popup-image-container {
             padding: 40px 30px 50px;
             text-align: center;
-            background-color: rgba(10, 10, 10, 0.3);
+            background-color: rgba(15, 15, 15, 0.2);
             min-height: 400px;
             display: flex;
             justify-content: center;
@@ -215,10 +215,10 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 100px;
+            height: 80px;
             background: linear-gradient(to top, 
-                rgba(17, 17, 17, 0.85) 0%, 
-                rgba(17, 17, 17, 0.5) 50%, 
+                rgba(20, 20, 20, 0.75) 0%, 
+                rgba(20, 20, 20, 0.3) 50%, 
                 transparent 100%);
             pointer-events: none;
             border-radius: 0 0 12px 12px;
@@ -229,7 +229,7 @@
             max-height: 65vh;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
         }
 
         .popup-separator {
@@ -699,4 +699,4 @@
         console.log('==============================');
     </script>
 </body>
-</html>
+    </html>
