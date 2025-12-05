@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Foto - Dark Mode</title>
+    <title>Foto Wisuda - Dark Mode</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Reset dan dasar */
@@ -42,49 +42,22 @@
 
         .header-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             max-width: 1600px;
             margin: 0 auto;
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--putih);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .logo i {
-            color: var(--abu-abu-terang);
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: var(--putih-kusam);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-            padding: 0.5rem 0;
-        }
-
-        nav a:hover {
-            color: var(--putih);
-            border-bottom: 2px solid var(--abu-abu-terang);
-        }
-
-        .info-box {
-            background-color: var(--abu-abu-gelap);
-            padding: 0.8rem 1.2rem;
-            border-radius: 5px;
-            font-size: 0.9rem;
             color: var(--abu-abu-terang);
         }
 
@@ -95,49 +68,9 @@
             padding: 0 2rem;
         }
 
-        .intro {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background-color: var(--hitam);
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .intro h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--putih);
-        }
-
-        .intro p {
-            color: var(--abu-abu-terang);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
         /* Gallery */
         .gallery {
             margin-bottom: 3rem;
-        }
-
-        .gallery-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--abu-abu-gelap);
-        }
-
-        .gallery-header h2 {
-            font-size: 1.8rem;
-            color: var(--putih);
-        }
-
-        .gallery-info {
-            color: var(--abu-abu-terang);
-            font-size: 0.95rem;
         }
 
         .photo-grid {
@@ -169,24 +102,15 @@
         }
 
         .photo-info {
-            padding: 1.2rem;
+            padding: 1rem;
         }
 
         .photo-title {
             font-weight: 600;
-            margin-bottom: 0.5rem;
             color: var(--putih);
-            font-size: 1rem;
+            font-size: 0.9rem;
             word-break: break-all;
-        }
-
-        .photo-number {
-            font-size: 0.85rem;
-            color: var(--abu-abu-terang);
-            background-color: var(--abu-abu-gelap);
-            padding: 0.2rem 0.5rem;
-            border-radius: 3px;
-            display: inline-block;
+            text-align: center;
         }
 
         .photo-loading {
@@ -284,71 +208,6 @@
             right: 20px;
         }
 
-        /* Kontrol galeri */
-        .gallery-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .gallery-btn {
-            background-color: var(--abu-abu-gelap);
-            color: var(--putih-kusam);
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .gallery-btn:hover {
-            background-color: var(--abu-abu);
-            color: var(--putih);
-        }
-
-        .gallery-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--hitam);
-            padding: 2.5rem 2rem;
-            margin-top: 3rem;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        .footer-content p {
-            color: var(--abu-abu-terang);
-            margin-bottom: 1rem;
-        }
-
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .social-icons a {
-            color: var(--putih-kusam);
-            font-size: 1.5rem;
-            transition: color 0.3s;
-        }
-
-        .social-icons a:hover {
-            color: var(--putih);
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
             .photo-grid {
@@ -357,29 +216,12 @@
         }
 
         @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 1.5rem;
+            .logo {
+                font-size: 1.8rem;
             }
-
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
-            }
-
+            
             .photo-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-
-            .intro h1 {
-                font-size: 2rem;
-            }
-
-            .gallery-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
             }
         }
 
@@ -391,61 +233,30 @@
             .container {
                 padding: 0 1rem;
             }
-
-            .intro {
-                padding: 1.5rem;
+            
+            .logo {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header dengan navigasi -->
+    <!-- Header sederhana -->
     <header>
         <div class="header-container">
             <div class="logo">
                 <i class="fas fa-camera"></i>
-                <span>Galeri Foto</span>
-            </div>
-            
-            <nav>
-                <ul>
-                    <li><a href="#home">Beranda</a></li>
-                    <li><a href="#gallery">Galeri</a></li>
-                    <li><a href="#about">Tentang</a></li>
-                </ul>
-            </nav>
-            
-            <div class="info-box">
-                <i class="fas fa-images"></i>
-                <span id="totalPhotos">63 Foto</span>
+                <span>Foto Wisuda</span>
             </div>
         </div>
     </header>
 
     <!-- Konten utama -->
     <main class="container">
-        <section class="intro" id="home">
-            <h1>Galeri Foto Dark Mode</h1>
-            <p>Menampilkan 63 foto dari direktori <strong>assets/</strong> dengan tema hitam, abu-abu, dan putih. Semua foto ditampilkan dengan desain minimalis yang elegan.</p>
-        </section>
-
         <!-- Galeri foto -->
-        <section class="gallery" id="gallery">
-            <div class="gallery-header">
-                <h2>Koleksi Foto (IMG_0308.jpg - IMG_0370.jpg)</h2>
-                <div class="gallery-info">
-                    <i class="fas fa-info-circle"></i>
-                    <span>Klik foto untuk memperbesar</span>
-                </div>
-            </div>
-
+        <section class="gallery">
             <div class="photo-grid" id="photoGrid">
                 <!-- Foto-foto akan dimuat di sini melalui JavaScript -->
-            </div>
-
-            <div class="gallery-controls">
-                <button class="gallery-btn" id="loadMoreBtn">Muat Lebih Banyak</button>
-                <button class="gallery-btn" id="showAllBtn">Tampilkan Semua</button>
             </div>
         </section>
     </main>
@@ -460,49 +271,29 @@
             <img class="lightbox-img" id="lightboxImage" src="" alt="">
             <div class="lightbox-info">
                 <h3 id="lightboxTitle"></h3>
-                <p id="lightboxNumber"></p>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer id="about">
-        <div class="footer-content">
-            <p>Website Galeri Foto dengan tema Dark Mode. Dibuat menggunakan HTML, CSS, dan JavaScript.</p>
-            <p>Semua 63 foto disimpan dalam direktori <strong>assets/</strong> di GitHub repository.</p>
-            
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-github"></i></a>
-                <a href="#"><i class="fas fa-code"></i></a>
-                <a href="#"><i class="fas fa-envelope"></i></a>
-            </div>
-            
-            <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--abu-abu);">
-                &copy; 2023 Galeri Foto Dark Mode. Warna: Hitam, Abu-abu, Putih.
-            </p>
-        </div>
-    </footer>
-
     <script>
-        // Daftar semua foto dari direktori assets
+        // Daftar semua foto dari direktori assets dengan ekstensi JPG (huruf besar)
         const photoFiles = [
-            "IMG_0310.JPG", "IMG_0309.jpg", "IMG_0308.jpg", "IMG_0311.jpg", "IMG_0312.jpg", 
-            "IMG_0313.jpg", "IMG_0314.jpg", "IMG_0315.jpg", "IMG_0316.jpg", "IMG_0317.jpg", 
-            "IMG_0318.jpg", "IMG_0319.jpg", "IMG_0320.jpg", "IMG_0321.jpg", "IMG_0322.jpg", 
-            "IMG_0323.jpg", "IMG_0324.jpg", "IMG_0325.jpg", "IMG_0326.jpg", "IMG_0327.jpg", 
-            "IMG_0328.jpg", "IMG_0329.jpg", "IMG_0330.jpg", "IMG_0331.jpg", "IMG_0332.jpg", 
-            "IMG_0333.jpg", "IMG_0334.jpg", "IMG_0335.jpg", "IMG_0336.jpg", "IMG_0337.jpg", 
-            "IMG_0338.jpg", "IMG_0339.jpg", "IMG_0340.jpg", "IMG_0341.jpg", "IMG_0342.jpg", 
-            "IMG_0343.jpg", "IMG_0344.jpg", "IMG_0345.jpg", "IMG_0346.jpg", "IMG_0347.jpg", 
-            "IMG_0348.jpg", "IMG_0349.jpg", "IMG_0350.jpg", "IMG_0351.jpg", "IMG_0352.jpg", 
-            "IMG_0353.jpg", "IMG_0354.jpg", "IMG_0355.jpg", "IMG_0356.jpg", "IMG_0357.jpg", 
-            "IMG_0358.jpg", "IMG_0359.jpg", "IMG_0360.jpg", "IMG_0361.jpg", "IMG_0362.jpg", 
-            "IMG_0363.jpg", "IMG_0364.jpg", "IMG_0365.jpg", "IMG_0366.jpg", "IMG_0367.jpg", 
-            "IMG_0368.jpg", "IMG_0369.jpg", "IMG_0370.jpg"
+            "IMG_0308.JPG", "IMG_0309.JPG", "IMG_0310.JPG", "IMG_0311.JPG", "IMG_0312.JPG", 
+            "IMG_0313.JPG", "IMG_0314.JPG", "IMG_0315.JPG", "IMG_0316.JPG", "IMG_0317.JPG", 
+            "IMG_0318.JPG", "IMG_0319.JPG", "IMG_0320.JPG", "IMG_0321.JPG", "IMG_0322.JPG", 
+            "IMG_0323.JPG", "IMG_0324.JPG", "IMG_0325.JPG", "IMG_0326.JPG", "IMG_0327.JPG", 
+            "IMG_0328.JPG", "IMG_0329.JPG", "IMG_0330.JPG", "IMG_0331.JPG", "IMG_0332.JPG", 
+            "IMG_0333.JPG", "IMG_0334.JPG", "IMG_0335.JPG", "IMG_0336.JPG", "IMG_0337.JPG", 
+            "IMG_0338.JPG", "IMG_0339.JPG", "IMG_0340.JPG", "IMG_0341.JPG", "IMG_0342.JPG", 
+            "IMG_0343.JPG", "IMG_0344.JPG", "IMG_0345.JPG", "IMG_0346.JPG", "IMG_0347.JPG", 
+            "IMG_0348.JPG", "IMG_0349.JPG", "IMG_0350.JPG", "IMG_0351.JPG", "IMG_0352.JPG", 
+            "IMG_0353.JPG", "IMG_0354.JPG", "IMG_0355.JPG", "IMG_0356.JPG", "IMG_0357.JPG", 
+            "IMG_0358.JPG", "IMG_0359.JPG", "IMG_0360.JPG", "IMG_0361.JPG", "IMG_0362.JPG", 
+            "IMG_0363.JPG", "IMG_0364.JPG", "IMG_0365.JPG", "IMG_0366.JPG", "IMG_0367.JPG", 
+            "IMG_0368.JPG", "IMG_0369.JPG", "IMG_0370.JPG"
         ];
 
         // Konfigurasi
-        const PHOTOS_PER_PAGE = 12;
         const TOTAL_PHOTOS = photoFiles.length;
 
         // Elemen DOM
@@ -510,19 +301,12 @@
         const lightboxModal = document.getElementById('lightboxModal');
         const lightboxImage = document.getElementById('lightboxImage');
         const lightboxTitle = document.getElementById('lightboxTitle');
-        const lightboxNumber = document.getElementById('lightboxNumber');
         const closeLightbox = document.getElementById('closeLightbox');
         const prevPhotoBtn = document.getElementById('prevPhoto');
         const nextPhotoBtn = document.getElementById('nextPhoto');
-        const loadMoreBtn = document.getElementById('loadMoreBtn');
-        const showAllBtn = document.getElementById('showAllBtn');
-        const totalPhotosElement = document.getElementById('totalPhotos');
 
         // State aplikasi
         let currentPhotoIndex = 0;
-        let displayedPhotos = 0;
-        let allPhotosLoaded = false;
-        let currentPhotos = [];
 
         // Fungsi untuk membuat kartu foto
         function createPhotoCard(photo, index) {
@@ -533,12 +317,10 @@
             card.innerHTML = `
                 <div class="photo-loading">
                     <i class="fas fa-spinner fa-spin"></i>
-                    <p>Memuat foto...</p>
                 </div>
                 <img src="assets/${photo}" alt="${photo}" class="photo-img" style="display: none;">
                 <div class="photo-info">
                     <h3 class="photo-title">${photo}</h3>
-                    <span class="photo-number">Foto #${index + 1}</span>
                 </div>
             `;
             
@@ -557,7 +339,7 @@
             img.onerror = function() {
                 const loadingDiv = card.querySelector('.photo-loading');
                 if (loadingDiv) {
-                    loadingDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i><p>Foto tidak ditemukan</p>';
+                    loadingDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
                 }
             };
             
@@ -565,30 +347,12 @@
             return card;
         }
 
-        // Fungsi untuk memuat foto ke grid
-        function loadPhotos(count = PHOTOS_PER_PAGE) {
-            const startIndex = displayedPhotos;
-            const endIndex = Math.min(startIndex + count, TOTAL_PHOTOS);
-            
-            for (let i = startIndex; i < endIndex; i++) {
-                const photoCard = createPhotoCard(photoFiles[i], i);
+        // Fungsi untuk memuat semua foto ke grid
+        function loadAllPhotos() {
+            photoFiles.forEach((photo, index) => {
+                const photoCard = createPhotoCard(photo, index);
                 photoGrid.appendChild(photoCard);
-                currentPhotos.push(photoFiles[i]);
-            }
-            
-            displayedPhotos = endIndex;
-            
-            // Perbarui status tombol
-            if (displayedPhotos >= TOTAL_PHOTOS) {
-                loadMoreBtn.disabled = true;
-                loadMoreBtn.textContent = 'Semua Foto Dimuat';
-                showAllBtn.disabled = true;
-                showAllBtn.style.display = 'none';
-                allPhotosLoaded = true;
-            }
-            
-            // Perbarui info total foto
-            totalPhotosElement.textContent = `${displayedPhotos} dari ${TOTAL_PHOTOS} Foto`;
+            });
         }
 
         // Fungsi untuk membuka lightbox
@@ -605,7 +369,6 @@
             lightboxImage.src = `assets/${photo}`;
             lightboxImage.alt = photo;
             lightboxTitle.textContent = photo;
-            lightboxNumber.textContent = `Foto #${currentPhotoIndex + 1} dari ${TOTAL_PHOTOS}`;
         }
 
         // Fungsi untuk navigasi lightbox
@@ -649,24 +412,10 @@
             }
         });
 
-        // Tombol muat lebih banyak
-        loadMoreBtn.addEventListener('click', () => {
-            loadPhotos(PHOTOS_PER_PAGE);
-        });
-
-        // Tombol tampilkan semua
-        showAllBtn.addEventListener('click', () => {
-            if (!allPhotosLoaded) {
-                loadPhotos(TOTAL_PHOTOS - displayedPhotos);
-            }
-        });
-
-        // Inisialisasi
-        loadPhotos();
+        // Inisialisasi - memuat semua foto
+        loadAllPhotos();
         
-        // Log untuk debugging
-        console.log(`Galeri foto dark mode dengan ${TOTAL_PHOTOS} foto siap digunakan!`);
-        console.log('Foto dari direktori assets/ akan ditampilkan.');
+        console.log(`Galeri Foto Wisuda dengan ${TOTAL_PHOTOS} foto siap ditampilkan.`);
         console.log('Pastikan semua file foto berada di folder assets/ di repository GitHub Anda.');
     </script>
 </body>
