@@ -257,13 +257,6 @@
             border-bottom: 1px solid #222;
         }
 
-        .loading-indicator {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-
         @media (max-width: 768px) {
             .gallery-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -315,9 +308,7 @@
         </header>
         
         <div class="gallery-grid" id="galleryContainer">
-            <div class="loading-indicator">
-                <i class="fas fa-spinner fa-spin"></i> Memuat gambar dari direktori /assets/...
-            </div>
+            <!-- Gambar akan dimuat di sini -->
         </div>
         
         <footer>
@@ -351,9 +342,67 @@
     </div>
 
     <script>
-        // Variabel untuk menyimpan daftar file JPG yang ditemukan
-        let jpgFiles = [];
-        
+        // DAFTAR FILE JPG DI DIREKTORI /assets/
+        // Ganti dengan nama file JPG yang ada di folder Anda
+        const imageFiles = [
+            "IMG_0308.jpg",
+            "IMG_0309.jpg",
+            "IMG_0310.jpg",
+            "IMG_0311.jpg",
+            "IMG_0312.jpg",
+            "IMG_0313.jpg",
+            "IMG_0314.jpg",
+            "IMG_0315.jpg",
+            "IMG_0316.jpg",
+            "IMG_0317.jpg",
+            "IMG_0318.jpg",
+            "IMG_0319.jpg",
+            "IMG_0320.jpg",
+            "IMG_0321.jpg",
+            "IMG_0322.jpg",
+            "IMG_0323.jpg",
+            "IMG_0324.jpg",
+            "IMG_0325.jpg",
+            "IMG_0326.jpg",
+            "IMG_0327.jpg",
+            "IMG_0328.jpg",
+            "IMG_0329.jpg",
+            "IMG_0330.jpg",
+            "IMG_0331.jpg",
+            "IMG_0332.jpg",
+            "IMG_0333.jpg",
+            "IMG_0334.jpg",
+            "IMG_0335.jpg",
+            "IMG_0336.jpg",
+            "IMG_0337.jpg",
+            "IMG_0338.jpg",
+            "IMG_0339.jpg",
+            "IMG_0340.jpg",
+            "IMG_0341.jpg",
+            "IMG_0342.jpg",
+            "IMG_0343.jpg",
+            "IMG_0344.jpg",
+            "IMG_0345.jpg",
+            "IMG_0346.jpg",
+            "IMG_0347.jpg",
+            "IMG_0348.jpg",
+            "IMG_0349.jpg",
+            "IMG_0350.jpg",
+            "IMG_0351.jpg",
+            "IMG_0352.jpg",
+            "IMG_0353.jpg",
+            "IMG_0354.jpg",
+            "IMG_0355.jpg",
+            "IMG_0356.jpg",
+            "IMG_0357.jpg",
+            "IMG_0358.jpg",
+            "IMG_0359.jpg",
+            "IMG_0360.jpg",
+            "IMG_0361.jpg",
+            "IMG_0362.jpg",
+            "IMG_0363.jpg"
+        ];
+
         // Elemen DOM
         const galleryContainer = document.getElementById('galleryContainer');
         const imagePopup = document.getElementById('imagePopup');
@@ -365,114 +414,13 @@
         // Variabel untuk menyimpan file yang sedang dipilih
         let currentSelectedFile = '';
 
-        // Fungsi untuk mendeteksi file JPG di direktori /assets/
-        async function scanForJpgFiles() {
-            try {
-                // Simulasi daftar file - dalam implementasi nyata, 
-                // ini akan memerlukan bantuan server-side script
-                // Untuk demo, kita akan membuat array dari file-file yang mungkin ada
-                
-                // Array ini akan diisi secara otomatis dengan mencoba mengakses file
-                // yang ada di direktori /assets/
-                const possibleFiles = await detectJpgFiles();
-                jpgFiles = possibleFiles;
-                
-                if (jpgFiles.length === 0) {
-                    // Jika tidak ada file yang ditemukan, coba tampilkan pesan
-                    galleryContainer.innerHTML = `
-                        <div class="empty-gallery">
-                            <i class="fas fa-images"></i>
-                            <h3>Tidak ada file JPG ditemukan</h3>
-                            <p>Tambahkan file JPG ke direktori /assets/</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                // Tampilkan file yang ditemukan
-                loadGallery();
-                
-            } catch (error) {
-                console.error('Error scanning for JPG files:', error);
-                galleryContainer.innerHTML = `
-                    <div class="empty-gallery">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>Gagal memuat gambar</h3>
-                        <p>Pastikan direktori /assets/ berisi file JPG</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Fungsi untuk mendeteksi file JPG yang ada
-        async function detectJpgFiles() {
-            const detectedFiles = [];
-            
-            // Dalam implementasi nyata, Anda perlu:
-            // 1. Menggunakan server-side script untuk membaca direktori
-            // 2. Atau membuat daftar file yang sudah diketahui
-            
-            // Untuk demo, kita akan mencoba mengakses beberapa file umum
-            // dan menangkap error jika file tidak ada
-            const testFiles = await testCommonFiles();
-            
-            // Coba tambahkan file dari URL parameter jika ada
-            const urlParams = new URLSearchParams(window.location.search);
-            const manualFiles = urlParams.get('files');
-            if (manualFiles) {
-                manualFiles.split(',').forEach(file => {
-                    if (file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')) {
-                        if (!detectedFiles.includes(file)) {
-                            detectedFiles.push(file);
-                        }
-                    }
-                });
-            }
-            
-            // Gabungkan dengan file yang ditemukan dari testing
-            testFiles.forEach(file => {
-                if (!detectedFiles.includes(file)) {
-                    detectedFiles.push(file);
-                }
-            });
-            
-            return detectedFiles;
-        }
-
-        // Fungsi untuk menguji file-file umum
-        async function testCommonFiles() {
-            const foundFiles = [];
-            
-            // Daftar nama file yang mungkin ada (bisa disesuaikan)
-            const possibleNames = [
-                'foto.jpg', 'image.jpg', 'gambar.jpg', 'photo.jpg',
-                'img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg',
-                '20251205_163451.jpg', 'DSC001.jpg', 'PICT001.jpg'
-            ];
-            
-            // Coba setiap file
-            for (const fileName of possibleNames) {
-                try {
-                    const response = await fetch(`/assets/${fileName}`, { method: 'HEAD' });
-                    if (response.ok) {
-                        foundFiles.push(fileName);
-                    }
-                } catch (error) {
-                    // File tidak ditemukan, lanjutkan ke file berikutnya
-                    continue;
-                }
-            }
-            
-            return foundFiles;
-        }
-
         // Fungsi untuk memuat galeri
         function loadGallery() {
             // Kosongkan kontainer terlebih dahulu
             galleryContainer.innerHTML = '';
             
             // Jika tidak ada file
-            if (jpgFiles.length === 0) {
+            if (imageFiles.length === 0) {
                 galleryContainer.innerHTML = `
                     <div class="empty-gallery">
                         <i class="fas fa-images"></i>
@@ -484,7 +432,7 @@
             }
             
             // Loop melalui setiap file dan buat elemen galeri
-            jpgFiles.forEach(filename => {
+            imageFiles.forEach(filename => {
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
                 galleryItem.dataset.filename = filename;
@@ -560,6 +508,7 @@
             popupImage.style.display = 'block';
             // Kembalikan kontainer ke keadaan semula
             document.querySelector('.popup-image-container').innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+            popupImage = document.getElementById('popupImage');
         }
 
         // Fungsi untuk mendownload gambar
@@ -592,13 +541,13 @@
             }
         });
 
-        // Jalankan fungsi scan file saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', scanForJpgFiles);
+        // Jalankan fungsi memuat galeri saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', loadGallery);
         
         // Untuk debugging
-        console.log('Mencari file JPG di direktori /assets/...');
-        console.log('Catatan: Untuk implementasi nyata, perlu server-side script untuk membaca direktori.');
-        console.log('Anda dapat menambahkan file secara manual melalui URL parameter: ?files=nama1.jpg,nama2.jpg');
+        console.log(`Galeri dimuat. Menampilkan ${imageFiles.length} file JPG dari direktori /assets/`);
+        console.log('Daftar file:', imageFiles);
+        console.log('Catatan: Ganti array imageFiles dengan nama file JPG yang ada di folder /assets/ Anda');
     </script>
 </body>
 </html>
