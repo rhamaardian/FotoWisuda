@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Foto - Direktori assets/</title>
+    <title>Galeri Foto - Direktori /assets/</title>
     <style>
         * {
             margin: 0;
@@ -257,6 +257,24 @@
             border-bottom: 1px solid #222;
         }
 
+        .image-error {
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ff6b6b;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .image-error i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
         @media (max-width: 768px) {
             .gallery-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -303,7 +321,7 @@
         <header>
             <h1>Galeri Foto</h1>
             <div class="directory-info">
-                <i class="fas fa-folder"></i> Direktori: assets/
+                <i class="fas fa-folder"></i> Direktori: /assets/
             </div>
         </header>
         
@@ -312,7 +330,7 @@
         </div>
         
         <footer>
-            <p>Semua foto diambil dari direktori <strong>assets/</strong> dengan format JPG</p>
+            <p>Semua foto diambil dari direktori <strong>/assets/</strong> dengan format JPG</p>
             <p>Tema: Dark Mode (Hitam, Abu-abu, Putih)</p>
         </footer>
     </div>
@@ -342,8 +360,7 @@
     </div>
 
     <script>
-        // DAFTAR FILE JPG DI DIREKTORI assets/
-        // Ganti dengan nama file JPG yang ada di folder Anda
+        // DAFTAR FILE JPG DI DIREKTORI /assets/
         const imageFiles = [
             "IMG_0308.jpg",
             "IMG_0309.jpg",
@@ -411,6 +428,9 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const closePopupBtn = document.getElementById('closePopupBtn');
 
+        // Path dasar - bisa disesuaikan dengan struktur folder Anda
+        const BASE_PATH = 'assets/'; // Ganti dengan '' jika file di folder yang sama
+
         // Variabel untuk menyimpan file yang sedang dipilih
         let currentSelectedFile = '';
 
@@ -425,7 +445,7 @@
                     <div class="empty-gallery">
                         <i class="fas fa-images"></i>
                         <h3>Belum ada foto di galeri</h3>
-                        <p>Tambahkan file JPG ke direktori assets/</p>
+                        <p>Tambahkan file JPG ke direktori /assets/</p>
                     </div>
                 `;
                 return;
@@ -440,7 +460,7 @@
                 galleryItem.innerHTML = `
                     <div class="image-container">
                         <div class="image-placeholder">
-                            <i class="fas fa-image"></i> ${filename}
+                            <i class="fas fa-spinner fa-spin"></i> Memuat ${filename}
                         </div>
                     </div>
                     <div class="file-name">${filename}</div>
@@ -450,21 +470,31 @@
                 
                 // Coba memuat gambar
                 const img = new Image();
-                img.src = `assets/${filename}`;
+                img.src = `${BASE_PATH}${filename}`;
+                img.alt = filename;
                 
                 img.onload = function() {
-                    // Ganti placeholder dengan gambar yang berhasil dimuat
+                    console.log(`✓ Gambar berhasil dimuat: ${filename}`);
                     const imageContainer = galleryItem.querySelector('.image-container');
-                    imageContainer.innerHTML = `<img class="gallery-img" src="assets/${filename}" alt="${filename}">`;
+                    imageContainer.innerHTML = `<img class="gallery-img" src="${BASE_PATH}${filename}" alt="${filename}">`;
                     
                     // Tambahkan event listener untuk membuka popup
                     imageContainer.addEventListener('click', () => openPopup(filename, img.src));
                 };
                 
                 img.onerror = function() {
-                    // Jika gambar gagal dimuat, tetap tambahkan event listener dengan placeholder
+                    console.error(`✗ Gagal memuat: ${filename} dari ${BASE_PATH}${filename}`);
                     const imageContainer = galleryItem.querySelector('.image-container');
-                    imageContainer.addEventListener('click', () => openPopup(filename, ''));
+                    imageContainer.innerHTML = `
+                        <div class="image-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>Gambar tidak ditemukan</div>
+                            <div style="font-size:0.8rem; margin-top:5px; color:#aaa;">${BASE_PATH}${filename}</div>
+                        </div>
+                    `;
+                    
+                    // Tetap tambahkan event listener untuk menampilkan pesan error di popup
+                    imageContainer.addEventListener('click', () => openPopup(filename, null));
                 };
                 
                 // Juga tambahkan event listener ke nama file
@@ -472,7 +502,7 @@
                     if (img.complete && img.naturalHeight !== 0) {
                         openPopup(filename, img.src);
                     } else {
-                        openPopup(filename, '');
+                        openPopup(filename, null);
                     }
                 });
             });
@@ -483,16 +513,22 @@
             currentSelectedFile = filename;
             popupFileName.textContent = filename;
             
+            const popupImageContainer = document.querySelector('.popup-image-container');
+            
             if (imageSrc) {
                 popupImage.src = imageSrc;
                 popupImage.style.display = 'block';
                 popupImage.alt = filename;
             } else {
                 popupImage.style.display = 'none';
-                document.querySelector('.popup-image-container').innerHTML = `
-                    <div style="color: #888; font-size: 1.1rem;">
+                popupImageContainer.innerHTML = `
+                    <div style="color: #888; font-size: 1.1rem; text-align: center;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
-                        Gambar tidak ditemukan di direktori assets/
+                        <strong>Gambar tidak ditemukan</strong><br>
+                        <div style="font-size: 0.9rem; margin-top: 10px; color: #aaa;">
+                            Path: ${BASE_PATH}${filename}<br>
+                            Pastikan file ada di direktori tersebut
+                        </div>
                     </div>
                 `;
             }
@@ -503,21 +539,33 @@
         // Fungsi untuk menutup popup
         function closePopup() {
             imagePopup.style.display = 'none';
-            // Reset gambar popup
-            popupImage.src = '';
-            popupImage.style.display = 'block';
-            // Kembalikan kontainer ke keadaan semula
-            document.querySelector('.popup-image-container').innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+            
+            // Reset kontainer popup
+            const popupImageContainer = document.querySelector('.popup-image-container');
+            popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+            
+            // Re-assign elemen popupImage karena kita baru saja membuat elemen baru
             popupImage = document.getElementById('popupImage');
+            currentSelectedFile = '';
         }
 
         // Fungsi untuk mendownload gambar
         function downloadImage() {
-            if (!currentSelectedFile) return;
+            if (!currentSelectedFile) {
+                alert('Tidak ada file yang dipilih untuk didownload');
+                return;
+            }
             
             const link = document.createElement('a');
-            link.href = `assets/${currentSelectedFile}`;
+            link.href = `${BASE_PATH}${currentSelectedFile}`;
             link.download = currentSelectedFile;
+            link.target = '_blank';
+            
+            // Coba download, jika gagal beri pesan
+            link.onerror = function() {
+                alert('Gagal mendownload file. Pastikan file ada di direktori.');
+            };
+            
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -545,9 +593,10 @@
         document.addEventListener('DOMContentLoaded', loadGallery);
         
         // Untuk debugging
-        console.log(`Galeri dimuat. Menampilkan ${imageFiles.length} file JPG dari direktori assets/`);
-        console.log('Daftar file:', imageFiles);
-        console.log('Catatan: Ganti array imageFiles dengan nama file JPG yang ada di folder assets/ Anda');
+        console.log(`Galeri dimuat. Menampilkan ${imageFiles.length} file JPG`);
+        console.log(`Direktori dasar: ${BASE_PATH}`);
+        console.log('Struktur path yang digunakan:', `${BASE_PATH}nama_file.jpg`);
+        console.log('Catatan: Pastikan folder "assets" berada di direktori yang sama dengan file HTML');
     </script>
 </body>
 </html>
