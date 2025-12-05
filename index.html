@@ -152,7 +152,7 @@
             }
         }
 
-        /* Popup Styles - Efek bokeh lebih cerah 4x lipat */
+        /* Popup Styles */
         .popup-overlay {
             display: none;
             position: fixed;
@@ -171,16 +171,15 @@
         }
 
         .popup-content {
-            background-color: #000000;
+            background-color: #0a0a0a;
             border-radius: 12px;
             width: 90%;
             max-width: 800px;
             max-height: 90vh;
-            overflow: auto;
+            overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
             animation: popupAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            backdrop-filter: blur(3px);
         }
 
         .popup-overlay.closing .popup-content {
@@ -188,7 +187,7 @@
         }
 
         .popup-header {
-            padding: 8px 15px;
+            padding: 12px 15px;
             text-align: center;
             background-color: #000000;
             border-radius: 12px 12px 0 0;
@@ -199,6 +198,7 @@
             font-weight: 400;
             color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
         }
 
         .popup-image-container {
@@ -208,7 +208,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
             max-height: 60vh;
             overflow: hidden;
         }
@@ -220,13 +219,12 @@
             display: block;
         }
 
-        /* TOMBOL DOWNLOAD MENGAMBANG - TOMBOL KEMBALI DIHAPUS */
+        /* TOMBOL DOWNLOAD MENGAMBANG */
         .popup-buttons {
             display: flex;
             justify-content: center;
             padding: 20px;
-            background-color: #000000;
-            border-radius: 0 0 12px 12px;
+            background-color: transparent;
             margin-top: 0;
         }
 
@@ -242,8 +240,6 @@
             background-color: transparent;
             color: #fff;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            position: relative;
-            z-index: 2;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
@@ -498,6 +494,56 @@
         // Variabel untuk menyimpan file yang sedang dipilih
         let currentSelectedFile = '';
         let currentImagePath = '';
+        let originalImagePath = ''; // Untuk menyimpan path gambar asli
+
+        // Fungsi untuk membuat thumbnail/resolusi rendah
+        function createThumbnail(imgSrc, filename, callback) {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = function() {
+                // Buat canvas untuk thumbnail
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Tentukan ukuran thumbnail (max width 800px untuk popup, 300px untuk galeri)
+                const maxWidth = 800;
+                const maxHeight = 600;
+                let width = img.width;
+                let height = img.height;
+                
+                // Hitung ulang ukuran untuk menjaga aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+                
+                // Set ukuran canvas
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Gambar ulang dengan kualitas lebih rendah
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Konversi ke data URL dengan kualitas 70%
+                const thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                
+                callback(thumbnailDataUrl);
+            };
+            
+            img.onerror = function() {
+                console.error(`Gagal memuat gambar untuk thumbnail: ${imgSrc}`);
+                callback(null);
+            };
+            
+            img.src = imgSrc;
+        }
 
         // Fungsi untuk memuat galeri
         function loadGallery() {
@@ -561,7 +607,7 @@
                                 </div>
                             </div>
                         `;
-                        imageContainer.addEventListener('click', () => openPopup(filename, null));
+                        imageContainer.addEventListener('click', () => openPopup(filename, null, null));
                         return;
                     }
                     
@@ -570,45 +616,72 @@
                     
                     console.log(`Trying: ${fullPath}`);
                     
-                    const img = new Image();
-                    img.src = fullPath;
-                    img.alt = filename;
+                    // Simpan path asli
+                    galleryItem.dataset.originalPath = fullPath;
                     
-                    img.onload = function() {
-                        console.log(`✅ Berhasil: ${fullPath}`);
-                        const imageContainer = galleryItem.querySelector('.image-container');
-                        imageContainer.innerHTML = `<img class="gallery-img" src="${fullPath}" alt="${filename}">`;
-                        
-                        // Simpan path yang berhasil
-                        galleryItem.dataset.successPath = fullPath;
-                        
-                        imageContainer.addEventListener('click', () => openPopup(filename, fullPath));
-                    };
-                    
-                    img.onerror = function() {
-                        currentPathIndex++;
-                        setTimeout(tryNextPath, 50); // Coba path berikutnya
-                    };
+                    // Buat thumbnail untuk galeri
+                    createThumbnail(fullPath, filename, function(thumbnailDataUrl) {
+                        if (thumbnailDataUrl) {
+                            console.log(`✅ Thumbnail berhasil: ${filename}`);
+                            const imageContainer = galleryItem.querySelector('.image-container');
+                            const img = document.createElement('img');
+                            img.className = 'gallery-img';
+                            img.src = thumbnailDataUrl;
+                            img.alt = filename;
+                            img.loading = 'lazy'; // Optimasi loading
+                            imageContainer.innerHTML = '';
+                            imageContainer.appendChild(img);
+                            
+                            // Event listener untuk thumbnail di galeri
+                            imageContainer.addEventListener('click', () => {
+                                // Buka popup dengan thumbnail, tapi simpan path asli untuk download
+                                openPopup(filename, thumbnailDataUrl, fullPath);
+                            });
+                        } else {
+                            // Jika gagal buat thumbnail, coba langsung load gambar
+                            const img = new Image();
+                            img.src = fullPath;
+                            img.alt = filename;
+                            
+                            img.onload = function() {
+                                console.log(`✅ Berhasil tanpa thumbnail: ${fullPath}`);
+                                const imageContainer = galleryItem.querySelector('.image-container');
+                                imageContainer.innerHTML = `<img class="gallery-img" src="${fullPath}" alt="${filename}" loading="lazy">`;
+                                
+                                imageContainer.addEventListener('click', () => openPopup(filename, fullPath, fullPath));
+                            };
+                            
+                            img.onerror = function() {
+                                currentPathIndex++;
+                                setTimeout(tryNextPath, 50); // Coba path berikutnya
+                            };
+                        }
+                    });
                 }
                 
                 tryNextPath();
                 
                 // Event listener untuk nama file
                 galleryItem.querySelector('.file-name').addEventListener('click', function() {
-                    const successPath = galleryItem.dataset.successPath;
-                    if (successPath) {
-                        openPopup(filename, successPath);
+                    const originalPath = galleryItem.dataset.originalPath;
+                    if (originalPath) {
+                        // Buat thumbnail untuk popup
+                        createThumbnail(originalPath, filename, function(thumbnailDataUrl) {
+                            openPopup(filename, thumbnailDataUrl || originalPath, originalPath);
+                        });
                     } else {
-                        openPopup(filename, null);
+                        openPopup(filename, null, null);
                     }
                 });
             });
         }
 
         // Fungsi untuk membuka popup dengan animasi
-        function openPopup(filename, imageSrc) {
+        function openPopup(filename, thumbnailSrc, originalSrc) {
             currentSelectedFile = filename;
-            currentImagePath = imageSrc;
+            currentImagePath = thumbnailSrc; // Untuk tampilan di popup
+            originalImagePath = originalSrc; // Untuk download
+            
             popupFileName.textContent = filename;
             
             const popupImageContainer = document.querySelector('.popup-image-container');
@@ -616,13 +689,13 @@
             // Hapus class closing jika ada
             imagePopup.classList.remove('closing');
             
-            if (imageSrc) {
+            if (thumbnailSrc) {
                 // Pastikan elemen popupImage ada
                 if (!document.getElementById('popupImage')) {
                     popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
                     popupImage = document.getElementById('popupImage');
                 }
-                popupImage.src = imageSrc;
+                popupImage.src = thumbnailSrc;
                 popupImage.style.display = 'block';
                 popupImage.alt = filename;
             } else {
@@ -659,18 +732,19 @@
                 imagePopup.classList.remove('closing');
                 currentSelectedFile = '';
                 currentImagePath = '';
+                originalImagePath = '';
             }, 300); // Sesuaikan dengan durasi animasi
         }
 
-        // Fungsi untuk mendownload gambar
+        // Fungsi untuk mendownload gambar ASLI
         function downloadImage() {
-            if (!currentSelectedFile || !currentImagePath) {
+            if (!currentSelectedFile || !originalImagePath) {
                 alert('Tidak dapat mendownload. File tidak ditemukan di server GitHub.');
                 return;
             }
             
             const link = document.createElement('a');
-            link.href = currentImagePath;
+            link.href = originalImagePath; // Gunakan path asli, bukan thumbnail
             link.download = currentSelectedFile;
             
             document.body.appendChild(link);
@@ -708,4 +782,4 @@
         console.log('==============================');
     </script>
 </body>
-    </html>
+</html>
