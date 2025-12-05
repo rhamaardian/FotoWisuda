@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Foto - Direktori /assets/</title>
+    <title>Galeri Foto - Direktori /download/</title>
     <style>
         * {
             margin: 0;
@@ -400,7 +400,7 @@
         <header>
             <h1>Galeri Foto</h1>
             <div class="directory-info">
-                <i class="fas fa-folder"></i> Direktori: /assets/
+                <i class="fas fa-folder"></i> Direktori: /download/
             </div>
         </header>
         
@@ -409,7 +409,7 @@
         </div>
         
         <footer>
-            <p>Semua foto diambil dari direktori <strong>/assets/</strong> dengan format JPG</p>
+            <p>Semua foto diambil dari direktori <strong>/download/</strong> dengan format JPG</p>
             <p>Tema: Dark Mode (Hitam, Abu-abu, Putih)</p>
         </footer>
     </div>
@@ -435,7 +435,7 @@
     </div>
 
     <script>
-        // DAFTAR FILE JPG DI DIREKTORI /assets/
+        // DAFTAR FILE JPG DI DIREKTORI /download/
         const imageFiles = [
             "IMG_0308.JPG", "IMG_0309.JPG", "IMG_0310.JPG", "IMG_0311.JPG", "IMG_0312.JPG", 
             "IMG_0313.JPG", "IMG_0314.JPG", "IMG_0315.JPG", "IMG_0316.JPG", "IMG_0317.JPG", 
@@ -475,16 +475,16 @@
                 if (repoName && repoName !== '' && !repoName.includes('.html')) {
                     // Project site: https://username.github.io/repo-name/
                     console.log(`✅ Project site: Repository "${repoName}"`);
-                    return `/${repoName}/assets/`;
+                    return `/${repoName}/download/`;
                 } else {
                     // User site: https://username.github.io/
                     console.log("✅ User site: Root domain");
-                    return '/assets/';
+                    return '/download/';
                 }
             } else {
                 // Local development
                 console.log("📍 Development lokal");
-                return 'assets/';
+                return 'download/';
             }
         }
 
@@ -559,7 +559,7 @@
                     <div class="empty-gallery">
                         <i class="fas fa-images"></i>
                         <h3>Belum ada foto di galeri</h3>
-                        <p>Tambahkan file JPG ke direktori /assets/</p>
+                        <p>Tambahkan file JPG ke direktori /download/</p>
                     </div>
                 `;
                 return;
@@ -589,9 +589,9 @@
                     BASE_PATH,
                     `./${BASE_PATH.replace(/^\//, '')}`,
                     `/${BASE_PATH.replace(/^\//, '')}`,
-                    'assets/',
-                    './assets/',
-                    '/assets/'
+                    'download/',
+                    './download/',
+                    '/download/'
                 ].filter((value, index, self) => self.indexOf(value) === index); // Hapus duplikat
                 
                 let currentPathIndex = 0;
@@ -715,8 +715,8 @@
                             Path yang dicoba: <strong>${BASE_PATH}</strong><br><br>
                             <div style="font-size: 0.8rem; color: #888;">
                                 <strong>Solusi untuk GitHub:</strong><br>
-                                1. Pastikan folder "assets" ada di root repository<br>
-                                2. Pastikan file ${filename} ada di folder "assets"<br>
+                                1. Pastikan folder "download" ada di root repository<br>
+                                2. Pastikan file ${filename} ada di folder "download"<br>
                                 3. Pastikan GitHub Pages sudah diaktifkan (Settings → Pages)<br>
                                 4. Tunggu 1-2 menit setelah upload<br>
                                 5. Cek URL GitHub Pages: ${window.location.origin}${BASE_PATH}${filename}
