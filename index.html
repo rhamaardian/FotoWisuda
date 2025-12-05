@@ -496,6 +496,9 @@
         let currentImagePath = '';
         let originalImagePath = ''; // Untuk menyimpan path gambar asli
 
+        // Variabel untuk mengontrol tombol kembali
+        let popupHistoryState = null;
+
         // Fungsi untuk membuat thumbnail/resolusi rendah
         function createThumbnail(imgSrc, filename, callback) {
             const img = new Image();
@@ -689,6 +692,10 @@
             // Hapus class closing jika ada
             imagePopup.classList.remove('closing');
             
+            // Tambahkan state ke history untuk mengontrol tombol kembali
+            popupHistoryState = { popupOpen: true };
+            history.pushState(popupHistoryState, '');
+            
             if (thumbnailSrc) {
                 // Pastikan elemen popupImage ada
                 if (!document.getElementById('popupImage')) {
@@ -724,6 +731,11 @@
 
         // Fungsi untuk menutup popup dengan animasi
         function closePopup() {
+            // Hapus state dari history jika popup sedang terbuka
+            if (popupHistoryState && popupHistoryState.popupOpen) {
+                history.back();
+            }
+            
             imagePopup.classList.add('closing');
             
             // Tunggu animasi selesai sebelum menyembunyikan
@@ -733,6 +745,7 @@
                 currentSelectedFile = '';
                 currentImagePath = '';
                 originalImagePath = '';
+                popupHistoryState = null;
             }, 300); // Sesuaikan dengan durasi animasi
         }
 
@@ -771,6 +784,28 @@
             }
         });
 
+        // Handle tombol kembali browser
+        window.addEventListener('popstate', function(event) {
+            if (popupHistoryState && popupHistoryState.popupOpen && imagePopup.style.display === 'flex') {
+                // Tutup popup tanpa kembali ke halaman sebelumnya
+                event.preventDefault();
+                event.stopPropagation();
+                
+                imagePopup.classList.add('closing');
+                setTimeout(() => {
+                    imagePopup.style.display = 'none';
+                    imagePopup.classList.remove('closing');
+                    currentSelectedFile = '';
+                    currentImagePath = '';
+                    originalImagePath = '';
+                    popupHistoryState = null;
+                    
+                    // Tambahkan state kembali untuk mencegah navigasi
+                    history.pushState({}, '');
+                }, 300);
+            }
+        });
+
         // Jalankan fungsi memuat galeri saat halaman dimuat
         document.addEventListener('DOMContentLoaded', loadGallery);
         
@@ -782,4 +817,4 @@
         console.log('==============================');
     </script>
 </body>
-</html>
+    </html>
