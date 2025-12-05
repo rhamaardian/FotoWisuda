@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Foto - Direktori /assets/</title>
+    <title>Galeri Foto - Direktori assets/</title>
     <style>
         * {
             margin: 0;
@@ -303,7 +303,7 @@
         <header>
             <h1>Galeri Foto</h1>
             <div class="directory-info">
-                <i class="fas fa-folder"></i> Direktori: /assets/
+                <i class="fas fa-folder"></i> Direktori: assets/
             </div>
         </header>
         
@@ -312,7 +312,7 @@
         </div>
         
         <footer>
-            <p>Semua foto diambil dari direktori <strong>/assets/</strong> dengan format JPG</p>
+            <p>Semua foto diambil dari direktori <strong>assets/</strong> dengan format JPG</p>
             <p>Tema: Dark Mode (Hitam, Abu-abu, Putih)</p>
         </footer>
     </div>
@@ -342,7 +342,7 @@
     </div>
 
     <script>
-        // DAFTAR FILE JPG DI DIREKTORI /assets/
+        // DAFTAR FILE JPG DI DIREKTORI assets/
         // Ganti dengan nama file JPG yang ada di folder Anda
         const imageFiles = [
             "IMG_0308.jpg",
@@ -425,7 +425,7 @@
                     <div class="empty-gallery">
                         <i class="fas fa-images"></i>
                         <h3>Belum ada foto di galeri</h3>
-                        <p>Tambahkan file JPG ke direktori /assets/</p>
+                        <p>Tambahkan file JPG ke direktori assets/</p>
                     </div>
                 `;
                 return;
@@ -450,12 +450,12 @@
                 
                 // Coba memuat gambar
                 const img = new Image();
-                img.src = `/assets/${filename}`;
+                img.src = `assets/${filename}`;
                 
                 img.onload = function() {
                     // Ganti placeholder dengan gambar yang berhasil dimuat
                     const imageContainer = galleryItem.querySelector('.image-container');
-                    imageContainer.innerHTML = `<img class="gallery-img" src="/assets/${filename}" alt="${filename}">`;
+                    imageContainer.innerHTML = `<img class="gallery-img" src="assets/${filename}" alt="${filename}">`;
                     
                     // Tambahkan event listener untuk membuka popup
                     imageContainer.addEventListener('click', () => openPopup(filename, img.src));
@@ -492,7 +492,7 @@
                 document.querySelector('.popup-image-container').innerHTML = `
                     <div style="color: #888; font-size: 1.1rem;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
-                        Gambar tidak ditemukan di direktori /assets/
+                        Gambar tidak ditemukan di direktori assets/
                     </div>
                 `;
             }
@@ -516,7 +516,7 @@
             if (!currentSelectedFile) return;
             
             const link = document.createElement('a');
-            link.href = `/assets/${currentSelectedFile}`;
+            link.href = `assets/${currentSelectedFile}`;
             link.download = currentSelectedFile;
             document.body.appendChild(link);
             link.click();
@@ -545,9 +545,9 @@
         document.addEventListener('DOMContentLoaded', loadGallery);
         
         // Untuk debugging
-        console.log(`Galeri dimuat. Menampilkan ${imageFiles.length} file JPG dari direktori /assets/`);
+        console.log(`Galeri dimuat. Menampilkan ${imageFiles.length} file JPG dari direktori assets/`);
         console.log('Daftar file:', imageFiles);
-        console.log('Catatan: Ganti array imageFiles dengan nama file JPG yang ada di folder /assets/ Anda');
+        console.log('Catatan: Ganti array imageFiles dengan nama file JPG yang ada di folder assets/ Anda');
     </script>
 </body>
 </html>
