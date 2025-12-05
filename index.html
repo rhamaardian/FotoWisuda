@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeri Foto - Direktori /assets/</title>
     <style>
+        /* STYLE SAMA PERSIS DENGAN SEBELUMNYA */
         * {
             margin: 0;
             padding: 0;
@@ -423,16 +424,46 @@
         // Elemen DOM
         const galleryContainer = document.getElementById('galleryContainer');
         const imagePopup = document.getElementById('imagePopup');
-        const popupImage = document.getElementById('popupImage');
+        let popupImage = document.getElementById('popupImage');
         const popupFileName = document.getElementById('popupFileName');
         const downloadBtn = document.getElementById('downloadBtn');
         const closePopupBtn = document.getElementById('closePopupBtn');
 
-        // Path dasar - bisa disesuaikan dengan struktur folder Anda
-        const BASE_PATH = 'assets/'; // Ganti dengan '' jika file di folder yang sama
+        // PATH UNTUK GITHUB PAGES - SANGAT PENTING!
+        // Coba otomatis deteksi jika di GitHub Pages
+        function getBasePath() {
+            const isGitHubPages = window.location.hostname.includes('github.io');
+            
+            if (isGitHubPages) {
+                // Untuk GitHub Pages, path relatif dari root
+                console.log("✅ Terdeteksi GitHub Pages");
+                
+                // Cek apakah ada nama repository di URL
+                const pathParts = window.location.pathname.split('/');
+                const repoName = pathParts[1];
+                
+                if (repoName && repoName !== '' && !repoName.includes('.html')) {
+                    // Project site: https://username.github.io/repo-name/
+                    console.log(`✅ Project site: Repository "${repoName}"`);
+                    return `/${repoName}/assets/`;
+                } else {
+                    // User site: https://username.github.io/
+                    console.log("✅ User site: Root domain");
+                    return '/assets/';
+                }
+            } else {
+                // Local development
+                console.log("📍 Development lokal");
+                return 'assets/';
+            }
+        }
+
+        const BASE_PATH = getBasePath();
+        console.log(`📁 Base path yang digunakan: "${BASE_PATH}"`);
 
         // Variabel untuk menyimpan file yang sedang dipilih
         let currentSelectedFile = '';
+        let currentImagePath = '';
 
         // Fungsi untuk memuat galeri
         function loadGallery() {
@@ -451,8 +482,10 @@
                 return;
             }
             
+            console.log(`🖼️ Memuat ${imageFiles.length} gambar...`);
+            
             // Loop melalui setiap file dan buat elemen galeri
-            imageFiles.forEach(filename => {
+            imageFiles.forEach((filename, index) => {
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
                 galleryItem.dataset.filename = filename;
@@ -460,7 +493,7 @@
                 galleryItem.innerHTML = `
                     <div class="image-container">
                         <div class="image-placeholder">
-                            <i class="fas fa-spinner fa-spin"></i> Memuat ${filename}
+                            <i class="fas fa-spinner fa-spin"></i> Loading ${index + 1}/${imageFiles.length}
                         </div>
                     </div>
                     <div class="file-name">${filename}</div>
@@ -468,39 +501,69 @@
                 
                 galleryContainer.appendChild(galleryItem);
                 
-                // Coba memuat gambar
-                const img = new Image();
-                img.src = `${BASE_PATH}${filename}`;
-                img.alt = filename;
+                // Coba beberapa path untuk kompatibilitas
+                const possiblePaths = [
+                    BASE_PATH,
+                    `./${BASE_PATH.replace(/^\//, '')}`,
+                    `/${BASE_PATH.replace(/^\//, '')}`,
+                    'assets/',
+                    './assets/',
+                    '/assets/'
+                ].filter((value, index, self) => self.indexOf(value) === index); // Hapus duplikat
                 
-                img.onload = function() {
-                    console.log(`✓ Gambar berhasil dimuat: ${filename}`);
-                    const imageContainer = galleryItem.querySelector('.image-container');
-                    imageContainer.innerHTML = `<img class="gallery-img" src="${BASE_PATH}${filename}" alt="${filename}">`;
+                let currentPathIndex = 0;
+                
+                function tryNextPath() {
+                    if (currentPathIndex >= possiblePaths.length) {
+                        // Semua path gagal
+                        console.error(`❌ Semua path gagal untuk: ${filename}`);
+                        const imageContainer = galleryItem.querySelector('.image-container');
+                        imageContainer.innerHTML = `
+                            <div class="image-error">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>Gambar tidak ditemukan di GitHub</div>
+                                <div style="font-size:0.7rem; margin-top:5px; color:#aaa;">
+                                    Cek: ${filename}
+                                </div>
+                            </div>
+                        `;
+                        imageContainer.addEventListener('click', () => openPopup(filename, null));
+                        return;
+                    }
                     
-                    // Tambahkan event listener untuk membuka popup
-                    imageContainer.addEventListener('click', () => openPopup(filename, img.src));
-                };
-                
-                img.onerror = function() {
-                    console.error(`✗ Gagal memuat: ${filename} dari ${BASE_PATH}${filename}`);
-                    const imageContainer = galleryItem.querySelector('.image-container');
-                    imageContainer.innerHTML = `
-                        <div class="image-error">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <div>Gambar tidak ditemukan</div>
-                            <div style="font-size:0.8rem; margin-top:5px; color:#aaa;">${BASE_PATH}${filename}</div>
-                        </div>
-                    `;
+                    const path = possiblePaths[currentPathIndex];
+                    const fullPath = path + filename;
                     
-                    // Tetap tambahkan event listener untuk menampilkan pesan error di popup
-                    imageContainer.addEventListener('click', () => openPopup(filename, null));
-                };
+                    console.log(`Trying: ${fullPath}`);
+                    
+                    const img = new Image();
+                    img.src = fullPath;
+                    img.alt = filename;
+                    
+                    img.onload = function() {
+                        console.log(`✅ Berhasil: ${fullPath}`);
+                        const imageContainer = galleryItem.querySelector('.image-container');
+                        imageContainer.innerHTML = `<img class="gallery-img" src="${fullPath}" alt="${filename}">`;
+                        
+                        // Simpan path yang berhasil
+                        galleryItem.dataset.successPath = fullPath;
+                        
+                        imageContainer.addEventListener('click', () => openPopup(filename, fullPath));
+                    };
+                    
+                    img.onerror = function() {
+                        currentPathIndex++;
+                        setTimeout(tryNextPath, 50); // Coba path berikutnya
+                    };
+                }
                 
-                // Juga tambahkan event listener ke nama file
-                galleryItem.querySelector('.file-name').addEventListener('click', () => {
-                    if (img.complete && img.naturalHeight !== 0) {
-                        openPopup(filename, img.src);
+                tryNextPath();
+                
+                // Event listener untuk nama file
+                galleryItem.querySelector('.file-name').addEventListener('click', function() {
+                    const successPath = galleryItem.dataset.successPath;
+                    if (successPath) {
+                        openPopup(filename, successPath);
                     } else {
                         openPopup(filename, null);
                     }
@@ -511,23 +574,36 @@
         // Fungsi untuk membuka popup
         function openPopup(filename, imageSrc) {
             currentSelectedFile = filename;
+            currentImagePath = imageSrc;
             popupFileName.textContent = filename;
             
             const popupImageContainer = document.querySelector('.popup-image-container');
             
             if (imageSrc) {
+                // Pastikan elemen popupImage ada
+                if (!document.getElementById('popupImage')) {
+                    popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+                    popupImage = document.getElementById('popupImage');
+                }
                 popupImage.src = imageSrc;
                 popupImage.style.display = 'block';
                 popupImage.alt = filename;
             } else {
-                popupImage.style.display = 'none';
                 popupImageContainer.innerHTML = `
-                    <div style="color: #888; font-size: 1.1rem; text-align: center;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
-                        <strong>Gambar tidak ditemukan</strong><br>
-                        <div style="font-size: 0.9rem; margin-top: 10px; color: #aaa;">
-                            Path: ${BASE_PATH}${filename}<br>
-                            Pastikan file ada di direktori tersebut
+                    <div style="color: #ff6b6b; font-size: 1.1rem; text-align: center; padding: 40px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i><br>
+                        <strong>FILE TIDAK DITEMUKAN DI GITHUB</strong><br><br>
+                        <div style="font-size: 0.9rem; color: #aaa; background: #1a1a1a; padding: 15px; border-radius: 5px;">
+                            File: <strong>${filename}</strong><br>
+                            Path yang dicoba: <strong>${BASE_PATH}</strong><br><br>
+                            <div style="font-size: 0.8rem; color: #888;">
+                                <strong>Solusi untuk GitHub:</strong><br>
+                                1. Pastikan folder "assets" ada di root repository<br>
+                                2. Pastikan file ${filename} ada di folder "assets"<br>
+                                3. Pastikan GitHub Pages sudah diaktifkan (Settings → Pages)<br>
+                                4. Tunggu 1-2 menit setelah upload<br>
+                                5. Cek URL GitHub Pages: ${window.location.origin}${BASE_PATH}${filename}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -539,32 +615,20 @@
         // Fungsi untuk menutup popup
         function closePopup() {
             imagePopup.style.display = 'none';
-            
-            // Reset kontainer popup
-            const popupImageContainer = document.querySelector('.popup-image-container');
-            popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
-            
-            // Re-assign elemen popupImage karena kita baru saja membuat elemen baru
-            popupImage = document.getElementById('popupImage');
             currentSelectedFile = '';
+            currentImagePath = '';
         }
 
         // Fungsi untuk mendownload gambar
         function downloadImage() {
-            if (!currentSelectedFile) {
-                alert('Tidak ada file yang dipilih untuk didownload');
+            if (!currentSelectedFile || !currentImagePath) {
+                alert('Tidak dapat mendownload. File tidak ditemukan di server GitHub.');
                 return;
             }
             
             const link = document.createElement('a');
-            link.href = `${BASE_PATH}${currentSelectedFile}`;
+            link.href = currentImagePath;
             link.download = currentSelectedFile;
-            link.target = '_blank';
-            
-            // Coba download, jika gagal beri pesan
-            link.onerror = function() {
-                alert('Gagal mendownload file. Pastikan file ada di direktori.');
-            };
             
             document.body.appendChild(link);
             link.click();
@@ -592,11 +656,12 @@
         // Jalankan fungsi memuat galeri saat halaman dimuat
         document.addEventListener('DOMContentLoaded', loadGallery);
         
-        // Untuk debugging
-        console.log(`Galeri dimuat. Menampilkan ${imageFiles.length} file JPG`);
-        console.log(`Direktori dasar: ${BASE_PATH}`);
-        console.log('Struktur path yang digunakan:', `${BASE_PATH}nama_file.jpg`);
-        console.log('Catatan: Pastikan folder "assets" berada di direktori yang sama dengan file HTML');
+        console.log('=== GITHUB PAGES DEBUG INFO ===');
+        console.log('URL Saat Ini:', window.location.href);
+        console.log('Hostname:', window.location.hostname);
+        console.log('Pathname:', window.location.pathname);
+        console.log('Base Path:', BASE_PATH);
+        console.log('==============================');
     </script>
 </body>
 </html>
