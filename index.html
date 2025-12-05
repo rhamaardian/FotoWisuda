@@ -188,67 +188,48 @@
         }
 
         .popup-header {
-            padding: 25px;
+            padding: 15px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             background-color: rgba(50, 50, 50, 0.95);
+            border-radius: 12px 12px 0 0;
         }
 
         .popup-header h2 {
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             font-weight: 400;
             color: #fff;
-            margin-bottom: 5px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         .popup-image-container {
-            padding: 40px 30px 50px;
+            padding: 0;
             text-align: center;
-            background-color: rgba(30, 30, 30, 0.8);
-            min-height: 400px;
+            background-color: transparent;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-        }
-
-        .popup-image-container::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to top, 
-                rgba(40, 40, 40, 0.95) 0%, 
-                rgba(40, 40, 40, 0.5) 50%, 
-                transparent 100%);
-            pointer-events: none;
-            border-radius: 0 0 12px 12px;
+            max-height: 60vh;
+            overflow: hidden;
         }
 
         .popup-image {
             max-width: 100%;
-            max-height: 65vh;
+            max-height: 60vh;
             object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .popup-separator {
-            display: none;
+            display: block;
         }
 
         /* TOMBOL DOWNLOAD MENGAMBANG - TOMBOL KEMBALI DIHAPUS */
         .popup-buttons {
             display: flex;
             justify-content: center;
-            padding: 0 30px 30px;
-            background-color: transparent;
-            border-top: none;
-            position: relative;
-            margin-top: -50px;
+            padding: 25px;
+            background-color: rgba(50, 50, 50, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 0 12px 12px;
+            margin-top: 0;
         }
 
         .download-btn {
@@ -360,13 +341,7 @@
             }
             
             .popup-buttons {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .popup-btn {
-                width: 100%;
-                min-width: auto;
+                padding: 20px;
             }
             
             .popup-content {
@@ -374,7 +349,7 @@
             }
             
             .popup-image {
-                max-height: 55vh;
+                max-height: 50vh;
             }
             
             .file-name {
@@ -402,7 +377,7 @@
             }
             
             .popup-header h2 {
-                font-size: 1.4rem;
+                font-size: 1.1rem;
             }
             
             .download-btn {
@@ -736,4 +711,4 @@
         console.log('==============================');
     </script>
 </body>
-</html>
+</html> 
