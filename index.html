@@ -3,133 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foto Wisuda - Dark Mode</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Galeri Foto - Direktori /assets/</title>
     <style>
-        /* Reset dan dasar */
+        /* STYLE SAMA PERSIS DENGAN SEBELUMNYA */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --hitam: #000000;
-            --hitam-terang: #121212;
-            --abu-abu-gelap: #222222;
-            --abu-abu: #444444;
-            --abu-abu-terang: #888888;
-            --putih: #FFFFFF;
-            --putih-kusam: #F5F5F5;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--hitam-terang);
-            color: var(--putih-kusam);
-            line-height: 1.6;
+            background-color: #0a0a0a;
+            color: #f5f5f5;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* Header */
-        header {
-            background-color: var(--hitam);
-            padding: 1.5rem 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            max-width: 1600px;
+        .container {
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        .logo {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--putih);
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
         }
 
-        .logo i {
-            color: var(--abu-abu-terang);
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
         }
 
-        /* Main content */
-        .container {
-            max-width: 1600px;
-            margin: 2rem auto;
-            padding: 0 2rem;
+        .directory-info {
+            color: #aaa;
+            font-size: 1rem;
+            background-color: #1a1a1a;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            border: 1px solid #333;
         }
 
-        /* Gallery */
-        .gallery {
-            margin-bottom: 3rem;
-        }
-
-        .photo-grid {
+        .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
         }
 
-        .photo-card {
-            background-color: var(--hitam);
+        .gallery-item {
+            background-color: #111;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
+            border: 1px solid #222;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border-color: #444;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
             position: relative;
         }
 
-        .photo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
-        }
-
-        .photo-img {
+        .gallery-img {
             width: 100%;
-            height: 200px;
+            height: 100%;
             object-fit: cover;
             display: block;
-            background-color: var(--abu-abu-gelap);
+            transition: transform 0.5s ease;
         }
 
-        .photo-info {
-            padding: 1rem;
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.05);
         }
 
-        .photo-title {
-            font-weight: 600;
-            color: var(--putih);
+        .file-name {
+            padding: 15px;
             font-size: 0.9rem;
-            word-break: break-all;
+            color: #ccc;
             text-align: center;
+            background-color: #151515;
+            border-top: 1px solid #222;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .photo-loading {
-            width: 100%;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--abu-abu-gelap);
-            color: var(--abu-abu-terang);
-        }
-
-        .photo-loading i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Lightbox modal */
-        .lightbox-modal {
+        /* Popup Styles */
+        .popup-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -137,147 +114,255 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
+            animation: fadeIn 0.3s ease;
         }
 
-        .lightbox-content {
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .lightbox-img {
-            max-width: 100%;
-            max-height: 80vh;
-            border-radius: 5px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+        .popup-content {
+            background-color: #111;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: auto;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
         }
 
-        .lightbox-info {
-            color: var(--putih);
+        .popup-header {
+            padding: 25px;
             text-align: center;
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: var(--hitam);
+            border-bottom: 1px solid #333;
+            background-color: #151515;
+        }
+
+        .popup-header h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .popup-image-container {
+            padding: 30px;
+            text-align: center;
+            background-color: #0a0a0a;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-image {
+            max-width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
             border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
-        .close-lightbox {
-            position: absolute;
-            top: -50px;
-            right: 0;
-            background: none;
+        .popup-separator {
+            height: 1px;
+            background-color: #333;
+            margin: 0;
             border: none;
-            color: var(--putih);
-            font-size: 2.5rem;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px;
+            background-color: #151515;
+            border-top: 1px solid #333;
+        }
+
+        .popup-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: color 0.3s;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            text-transform: uppercase;
         }
 
-        .close-lightbox:hover {
-            color: var(--abu-abu-terang);
+        .download-btn {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
         }
 
-        .nav-lightbox {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: var(--putih);
-            border: none;
+        .download-btn:hover {
+            background-color: #444;
+            border-color: #777;
+        }
+
+        .back-btn {
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #444;
+        }
+
+        .back-btn:hover {
+            background-color: #333;
+            border-color: #666;
+        }
+
+        .empty-gallery {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-gallery i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .empty-gallery h3 {
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #888;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #333;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 250px;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #222;
+        }
+
+        .image-error {
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ff6b6b;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .image-error i {
             font-size: 2rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .nav-lightbox:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-lightbox.prev {
-            left: 20px;
-        }
-
-        .nav-lightbox.next {
-            right: 20px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .photo-grid {
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            }
+            margin-bottom: 10px;
         }
 
         @media (max-width: 768px) {
-            .logo {
-                font-size: 1.8rem;
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
             }
             
-            .photo-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .popup-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .popup-btn {
+                width: 100%;
+                min-width: auto;
             }
         }
 
         @media (max-width: 480px) {
-            .photo-grid {
+            .gallery-grid {
                 grid-template-columns: 1fr;
             }
-
-            .container {
-                padding: 0 1rem;
+            
+            body {
+                padding: 15px;
             }
             
-            .logo {
-                font-size: 1.5rem;
+            .popup-content {
+                width: 95%;
+            }
+            
+            .popup-header h2 {
+                font-size: 1.4rem;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Header sederhana -->
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <i class="fas fa-camera"></i>
-                <span>Foto Wisuda</span>
+    <div class="container">
+        <header>
+            <h1>Galeri Foto</h1>
+            <div class="directory-info">
+                <i class="fas fa-folder"></i> Direktori: /assets/
             </div>
-        </div>
-    </header>
-
-    <!-- Konten utama -->
-    <main class="container">
-        <!-- Galeri foto -->
-        <section class="gallery">
-            <div class="photo-grid" id="photoGrid">
-                <!-- Foto-foto akan dimuat di sini melalui JavaScript -->
-            </div>
-        </section>
-    </main>
-
-    <!-- Lightbox untuk melihat foto lebih besar -->
-    <div class="lightbox-modal" id="lightboxModal">
-        <button class="close-lightbox" id="closeLightbox">&times;</button>
-        <button class="nav-lightbox prev" id="prevPhoto">&#10094;</button>
-        <button class="nav-lightbox next" id="nextPhoto">&#10095;</button>
+        </header>
         
-        <div class="lightbox-content">
-            <img class="lightbox-img" id="lightboxImage" src="" alt="">
-            <div class="lightbox-info">
-                <h3 id="lightboxTitle"></h3>
+        <div class="gallery-grid" id="galleryContainer">
+            <!-- Gambar akan dimuat di sini -->
+        </div>
+        
+        <footer>
+            <p>Semua foto diambil dari direktori <strong>/assets/</strong> dengan format JPG</p>
+            <p>Tema: Dark Mode (Hitam, Abu-abu, Putih)</p>
+        </footer>
+    </div>
+
+    <!-- Popup Preview -->
+    <div class="popup-overlay" id="imagePopup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 id="popupFileName">Nama File</h2>
+            </div>
+            
+            <div class="popup-image-container">
+                <img class="popup-image" id="popupImage" alt="Preview Gambar">
+            </div>
+            
+            <hr class="popup-separator">
+            
+            <div class="popup-buttons">
+                <button class="popup-btn download-btn" id="downloadBtn">
+                    DOWNLOAD
+                </button>
+                <button class="popup-btn back-btn" id="closePopupBtn">
+                    KEMBALI
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Daftar semua foto dari direktori assets dengan ekstensi JPG (huruf besar)
-        const photoFiles = [
+        // DAFTAR FILE JPG DI DIREKTORI /assets/
+        const imageFiles = [
             "IMG_0308.JPG", "IMG_0309.JPG", "IMG_0310.JPG", "IMG_0311.JPG", "IMG_0312.JPG", 
             "IMG_0313.JPG", "IMG_0314.JPG", "IMG_0315.JPG", "IMG_0316.JPG", "IMG_0317.JPG", 
             "IMG_0318.JPG", "IMG_0319.JPG", "IMG_0320.JPG", "IMG_0321.JPG", "IMG_0322.JPG", 
@@ -293,130 +378,247 @@
             "IMG_0368.JPG", "IMG_0369.JPG", "IMG_0370.JPG"
         ];
 
-        // Konfigurasi
-        const TOTAL_PHOTOS = photoFiles.length;
-
         // Elemen DOM
-        const photoGrid = document.getElementById('photoGrid');
-        const lightboxModal = document.getElementById('lightboxModal');
-        const lightboxImage = document.getElementById('lightboxImage');
-        const lightboxTitle = document.getElementById('lightboxTitle');
-        const closeLightbox = document.getElementById('closeLightbox');
-        const prevPhotoBtn = document.getElementById('prevPhoto');
-        const nextPhotoBtn = document.getElementById('nextPhoto');
+        const galleryContainer = document.getElementById('galleryContainer');
+        const imagePopup = document.getElementById('imagePopup');
+        let popupImage = document.getElementById('popupImage');
+        const popupFileName = document.getElementById('popupFileName');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const closePopupBtn = document.getElementById('closePopupBtn');
 
-        // State aplikasi
-        let currentPhotoIndex = 0;
-
-        // Fungsi untuk membuat kartu foto
-        function createPhotoCard(photo, index) {
-            const card = document.createElement('div');
-            card.className = 'photo-card';
-            card.dataset.index = index;
+        // PATH UNTUK GITHUB PAGES - SANGAT PENTING!
+        // Coba otomatis deteksi jika di GitHub Pages
+        function getBasePath() {
+            const isGitHubPages = window.location.hostname.includes('github.io');
             
-            card.innerHTML = `
-                <div class="photo-loading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-                <img src="assets/${photo}" alt="${photo}" class="photo-img" style="display: none;">
-                <div class="photo-info">
-                    <h3 class="photo-title">${photo}</h3>
-                </div>
-            `;
-            
-            // Preload gambar
-            const img = new Image();
-            img.src = `assets/${photo}`;
-            img.onload = function() {
-                const cardImg = card.querySelector('.photo-img');
-                const loadingDiv = card.querySelector('.photo-loading');
-                if (cardImg && loadingDiv) {
-                    loadingDiv.style.display = 'none';
-                    cardImg.style.display = 'block';
+            if (isGitHubPages) {
+                // Untuk GitHub Pages, path relatif dari root
+                console.log("✅ Terdeteksi GitHub Pages");
+                
+                // Cek apakah ada nama repository di URL
+                const pathParts = window.location.pathname.split('/');
+                const repoName = pathParts[1];
+                
+                if (repoName && repoName !== '' && !repoName.includes('.html')) {
+                    // Project site: https://username.github.io/repo-name/
+                    console.log(`✅ Project site: Repository "${repoName}"`);
+                    return `/${repoName}/assets/`;
+                } else {
+                    // User site: https://username.github.io/
+                    console.log("✅ User site: Root domain");
+                    return '/assets/';
                 }
-            };
-            
-            img.onerror = function() {
-                const loadingDiv = card.querySelector('.photo-loading');
-                if (loadingDiv) {
-                    loadingDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-                }
-            };
-            
-            card.addEventListener('click', () => openLightbox(index));
-            return card;
+            } else {
+                // Local development
+                console.log("📍 Development lokal");
+                return 'assets/';
+            }
         }
 
-        // Fungsi untuk memuat semua foto ke grid
-        function loadAllPhotos() {
-            photoFiles.forEach((photo, index) => {
-                const photoCard = createPhotoCard(photo, index);
-                photoGrid.appendChild(photoCard);
+        const BASE_PATH = getBasePath();
+        console.log(`📁 Base path yang digunakan: "${BASE_PATH}"`);
+
+        // Variabel untuk menyimpan file yang sedang dipilih
+        let currentSelectedFile = '';
+        let currentImagePath = '';
+
+        // Fungsi untuk memuat galeri
+        function loadGallery() {
+            // Kosongkan kontainer terlebih dahulu
+            galleryContainer.innerHTML = '';
+            
+            // Jika tidak ada file
+            if (imageFiles.length === 0) {
+                galleryContainer.innerHTML = `
+                    <div class="empty-gallery">
+                        <i class="fas fa-images"></i>
+                        <h3>Belum ada foto di galeri</h3>
+                        <p>Tambahkan file JPG ke direktori /assets/</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            console.log(`🖼️ Memuat ${imageFiles.length} gambar...`);
+            
+            // Loop melalui setiap file dan buat elemen galeri
+            imageFiles.forEach((filename, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.dataset.filename = filename;
+                
+                galleryItem.innerHTML = `
+                    <div class="image-container">
+                        <div class="image-placeholder">
+                            <i class="fas fa-spinner fa-spin"></i> Loading ${index + 1}/${imageFiles.length}
+                        </div>
+                    </div>
+                    <div class="file-name">${filename}</div>
+                `;
+                
+                galleryContainer.appendChild(galleryItem);
+                
+                // Coba beberapa path untuk kompatibilitas
+                const possiblePaths = [
+                    BASE_PATH,
+                    `./${BASE_PATH.replace(/^\//, '')}`,
+                    `/${BASE_PATH.replace(/^\//, '')}`,
+                    'assets/',
+                    './assets/',
+                    '/assets/'
+                ].filter((value, index, self) => self.indexOf(value) === index); // Hapus duplikat
+                
+                let currentPathIndex = 0;
+                
+                function tryNextPath() {
+                    if (currentPathIndex >= possiblePaths.length) {
+                        // Semua path gagal
+                        console.error(`❌ Semua path gagal untuk: ${filename}`);
+                        const imageContainer = galleryItem.querySelector('.image-container');
+                        imageContainer.innerHTML = `
+                            <div class="image-error">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>Gambar tidak ditemukan di GitHub</div>
+                                <div style="font-size:0.7rem; margin-top:5px; color:#aaa;">
+                                    Cek: ${filename}
+                                </div>
+                            </div>
+                        `;
+                        imageContainer.addEventListener('click', () => openPopup(filename, null));
+                        return;
+                    }
+                    
+                    const path = possiblePaths[currentPathIndex];
+                    const fullPath = path + filename;
+                    
+                    console.log(`Trying: ${fullPath}`);
+                    
+                    const img = new Image();
+                    img.src = fullPath;
+                    img.alt = filename;
+                    
+                    img.onload = function() {
+                        console.log(`✅ Berhasil: ${fullPath}`);
+                        const imageContainer = galleryItem.querySelector('.image-container');
+                        imageContainer.innerHTML = `<img class="gallery-img" src="${fullPath}" alt="${filename}">`;
+                        
+                        // Simpan path yang berhasil
+                        galleryItem.dataset.successPath = fullPath;
+                        
+                        imageContainer.addEventListener('click', () => openPopup(filename, fullPath));
+                    };
+                    
+                    img.onerror = function() {
+                        currentPathIndex++;
+                        setTimeout(tryNextPath, 50); // Coba path berikutnya
+                    };
+                }
+                
+                tryNextPath();
+                
+                // Event listener untuk nama file
+                galleryItem.querySelector('.file-name').addEventListener('click', function() {
+                    const successPath = galleryItem.dataset.successPath;
+                    if (successPath) {
+                        openPopup(filename, successPath);
+                    } else {
+                        openPopup(filename, null);
+                    }
+                });
             });
         }
 
-        // Fungsi untuk membuka lightbox
-        function openLightbox(photoIndex) {
-            currentPhotoIndex = photoIndex;
-            updateLightbox();
-            lightboxModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Fungsi untuk memperbarui lightbox
-        function updateLightbox() {
-            const photo = photoFiles[currentPhotoIndex];
-            lightboxImage.src = `assets/${photo}`;
-            lightboxImage.alt = photo;
-            lightboxTitle.textContent = photo;
-        }
-
-        // Fungsi untuk navigasi lightbox
-        function navigateLightbox(direction) {
-            if (direction === 'prev') {
-                currentPhotoIndex = (currentPhotoIndex - 1 + TOTAL_PHOTOS) % TOTAL_PHOTOS;
+        // Fungsi untuk membuka popup
+        function openPopup(filename, imageSrc) {
+            currentSelectedFile = filename;
+            currentImagePath = imageSrc;
+            popupFileName.textContent = filename;
+            
+            const popupImageContainer = document.querySelector('.popup-image-container');
+            
+            if (imageSrc) {
+                // Pastikan elemen popupImage ada
+                if (!document.getElementById('popupImage')) {
+                    popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+                    popupImage = document.getElementById('popupImage');
+                }
+                popupImage.src = imageSrc;
+                popupImage.style.display = 'block';
+                popupImage.alt = filename;
             } else {
-                currentPhotoIndex = (currentPhotoIndex + 1) % TOTAL_PHOTOS;
+                popupImageContainer.innerHTML = `
+                    <div style="color: #ff6b6b; font-size: 1.1rem; text-align: center; padding: 40px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i><br>
+                        <strong>FILE TIDAK DITEMUKAN DI GITHUB</strong><br><br>
+                        <div style="font-size: 0.9rem; color: #aaa; background: #1a1a1a; padding: 15px; border-radius: 5px;">
+                            File: <strong>${filename}</strong><br>
+                            Path yang dicoba: <strong>${BASE_PATH}</strong><br><br>
+                            <div style="font-size: 0.8rem; color: #888;">
+                                <strong>Solusi untuk GitHub:</strong><br>
+                                1. Pastikan folder "assets" ada di root repository<br>
+                                2. Pastikan file ${filename} ada di folder "assets"<br>
+                                3. Pastikan GitHub Pages sudah diaktifkan (Settings → Pages)<br>
+                                4. Tunggu 1-2 menit setelah upload<br>
+                                5. Cek URL GitHub Pages: ${window.location.origin}${BASE_PATH}${filename}
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
-            updateLightbox();
+            
+            imagePopup.style.display = 'flex';
+        }
+
+        // Fungsi untuk menutup popup
+        function closePopup() {
+            imagePopup.style.display = 'none';
+            currentSelectedFile = '';
+            currentImagePath = '';
+        }
+
+        // Fungsi untuk mendownload gambar
+        function downloadImage() {
+            if (!currentSelectedFile || !currentImagePath) {
+                alert('Tidak dapat mendownload. File tidak ditemukan di server GitHub.');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.href = currentImagePath;
+            link.download = currentSelectedFile;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Event Listeners
-        closeLightbox.addEventListener('click', () => {
-            lightboxModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
+        downloadBtn.addEventListener('click', downloadImage);
+        closePopupBtn.addEventListener('click', closePopup);
 
-        prevPhotoBtn.addEventListener('click', () => navigateLightbox('prev'));
-        nextPhotoBtn.addEventListener('click', () => navigateLightbox('next'));
-
-        // Tutup lightbox saat klik di luar gambar
-        lightboxModal.addEventListener('click', (e) => {
-            if (e.target === lightboxModal) {
-                lightboxModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
+        // Tutup popup saat klik di luar konten
+        imagePopup.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
             }
         });
 
-        // Navigasi dengan keyboard
-        document.addEventListener('keydown', (e) => {
-            if (lightboxModal.style.display === 'flex') {
-                if (e.key === 'Escape') {
-                    lightboxModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                } else if (e.key === 'ArrowLeft') {
-                    navigateLightbox('prev');
-                } else if (e.key === 'ArrowRight') {
-                    navigateLightbox('next');
-                }
+        // Tutup popup dengan tombol Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && imagePopup.style.display === 'flex') {
+                closePopup();
             }
         });
 
-        // Inisialisasi - memuat semua foto
-        loadAllPhotos();
+        // Jalankan fungsi memuat galeri saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', loadGallery);
         
-        console.log(`Galeri Foto Wisuda dengan ${TOTAL_PHOTOS} foto siap ditampilkan.`);
-        console.log('Pastikan semua file foto berada di folder assets/ di repository GitHub Anda.');
+        console.log('=== GITHUB PAGES DEBUG INFO ===');
+        console.log('URL Saat Ini:', window.location.href);
+        console.log('Hostname:', window.location.hostname);
+        console.log('Pathname:', window.location.pathname);
+        console.log('Base Path:', BASE_PATH);
+        console.log('==============================');
     </script>
 </body>
 </html>
