@@ -484,10 +484,7 @@
         let currentImagePath = '';
         let originalImagePath = '';
 
-        // Intersection Observer untuk lazy loading
-        let observer;
-
-        // Fungsi untuk memuat gambar dengan teknik lazy loading
+        // Fungsi untuk memuat gambar tanpa lazy loading
         function loadGallery() {
             galleryContainer.innerHTML = '';
             
@@ -502,22 +499,7 @@
                 return;
             }
             
-            console.log(`Memuat ${imageFiles.length} gambar dengan lazy loading...`);
-            
-            // Buat Intersection Observer untuk lazy loading
-            observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const galleryItem = entry.target;
-                        const filename = galleryItem.dataset.filename;
-                        loadImageForGalleryItem(galleryItem, filename);
-                        observer.unobserve(galleryItem);
-                    }
-                });
-            }, {
-                rootMargin: '50px', // Mulai load 50px sebelum masuk viewport
-                threshold: 0.1
-            });
+            console.log(`Memuat semua ${imageFiles.length} gambar sekaligus...`);
             
             // Buat elemen galeri untuk semua gambar
             imageFiles.forEach((filename, index) => {
@@ -529,7 +511,7 @@
                 galleryItem.innerHTML = `
                     <div class="image-container">
                         <div class="image-placeholder">
-                            <i class="fas fa-image"></i>
+                            <i class="fas fa-spinner fa-spin"></i> Memuat...
                         </div>
                     </div>
                     <div class="file-name">${filename}</div>
@@ -565,8 +547,8 @@
                     }
                 });
                 
-                // Mulai observe untuk lazy loading
-                observer.observe(galleryItem);
+                // Langsung muat gambar tanpa menunggu
+                loadImageForGalleryItem(galleryItem, filename);
             });
         }
 
@@ -603,10 +585,10 @@
                 img.className = 'gallery-img';
                 img.src = fullPath;
                 img.alt = filename;
-                img.loading = 'lazy';
+                img.loading = 'eager'; // Ubah dari 'lazy' ke 'eager' untuk memuat segera
                 
                 img.onload = function() {
-                    console.log(`✅ Berhasil: ${filename}`);
+                    console.log(`✅ Berhasil memuat: ${filename}`);
                     const imageContainer = galleryItem.querySelector('.image-container');
                     imageContainer.innerHTML = '';
                     imageContainer.appendChild(img);
@@ -642,11 +624,11 @@
                     popupImage = document.getElementById('popupImage');
                 }
                 
-                // Gunakan gambar langsung tanpa membuat thumbnail di sisi klien
+                // Gunakan gambar langsung
                 popupImage.src = imageSrc;
                 popupImage.style.display = 'block';
                 popupImage.alt = filename;
-                popupImage.loading = 'eager'; // Prioritaskan loading untuk popup
+                popupImage.loading = 'eager';
             } else {
                 // Coba semua path untuk popup
                 const possiblePaths = [
@@ -787,11 +769,9 @@
         // Jalankan fungsi memuat galeri saat halaman dimuat
         document.addEventListener('DOMContentLoaded', loadGallery);
         
-        // Hentikan observer saat halaman ditutup
-        window.addEventListener('beforeunload', () => {
-            if (observer) {
-                observer.disconnect();
-            }
+        // Tampilkan status loading
+        window.addEventListener('load', function() {
+            console.log('Semua gambar telah dimuat sepenuhnya!');
         });
     </script>
 </body>
