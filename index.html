@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Foto - Direktori /download/</title>
+    <title>Galeri Foto - Wisuda</title>
     <style>
         * {
             margin: 0;
@@ -400,7 +400,7 @@
         <header>
             <h1>Galeri Foto</h1>
             <div class="directory-info">
-                <i class="fas fa-folder"></i> Wisuda Rhama
+                <i class="fas fa-folder"></i> Foto Wisuda
             </div>
         </header>
         
@@ -459,101 +459,38 @@
         const popupFileName = document.getElementById('popupFileName');
         const downloadBtn = document.getElementById('downloadBtn');
 
-        // PATH UNTUK GITHUB PAGES - SANGAT PENTING!
-        // Coba otomatis deteksi jika di GitHub Pages
+        // PATH UNTUK GITHUB PAGES
         function getBasePath() {
             const isGitHubPages = window.location.hostname.includes('github.io');
             
             if (isGitHubPages) {
-                // Untuk GitHub Pages, path relatif dari root
-                console.log("✅ Terdeteksi GitHub Pages");
-                
-                // Cek apakah ada nama repository di URL
                 const pathParts = window.location.pathname.split('/');
                 const repoName = pathParts[1];
                 
                 if (repoName && repoName !== '' && !repoName.includes('.html')) {
-                    // Project site: https://username.github.io/repo-name/
-                    console.log(`✅ Project site: Repository "${repoName}"`);
                     return `/${repoName}/download/`;
                 } else {
-                    // User site: https://username.github.io/
-                    console.log("✅ User site: Root domain");
                     return '/download/';
                 }
             } else {
-                // Local development
-                console.log("📍 Development lokal");
                 return 'download/';
             }
         }
 
         const BASE_PATH = getBasePath();
-        console.log(`📁 Base path yang digunakan: "${BASE_PATH}"`);
 
         // Variabel untuk menyimpan file yang sedang dipilih
         let currentSelectedFile = '';
         let currentImagePath = '';
-        let originalImagePath = ''; // Untuk menyimpan path gambar asli
+        let originalImagePath = '';
 
-        // Variabel untuk mengontrol tombol kembali atau back
-        let popupHistoryState = null;
+        // Intersection Observer untuk lazy loading
+        let observer;
 
-        // Fungsi untuk membuat thumbnail/resolusi rendah
-        function createThumbnail(imgSrc, filename, callback) {
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = function() {
-                // Buat canvas untuk thumbnail
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // Tentukan ukuran thumbnail (max width 800px untuk popup, 300px untuk galeri)
-                const maxWidth = 800;
-                const maxHeight = 600;
-                let width = img.width;
-                let height = img.height;
-                
-                // Hitung ulang ukuran untuk menjaga aspect ratio
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = Math.round((height * maxWidth) / width);
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = Math.round((width * maxHeight) / height);
-                        height = maxHeight;
-                    }
-                }
-                
-                // Set ukuran canvas
-                canvas.width = width;
-                canvas.height = height;
-                
-                // Gambar ulang dengan kualitas lebih rendah
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                // Konversi ke data URL dengan kualitas 70%
-                const thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                
-                callback(thumbnailDataUrl);
-            };
-            
-            img.onerror = function() {
-                console.error(`Gagal memuat gambar untuk thumbnail: ${imgSrc}`);
-                callback(null);
-            };
-            
-            img.src = imgSrc;
-        }
-
-        // Fungsi untuk memuat galeri
+        // Fungsi untuk memuat gambar dengan teknik lazy loading
         function loadGallery() {
-            // Kosongkan kontainer terlebih dahulu
             galleryContainer.innerHTML = '';
             
-            // Jika tidak ada file
             if (imageFiles.length === 0) {
                 galleryContainer.innerHTML = `
                     <div class="empty-gallery">
@@ -565,18 +502,34 @@
                 return;
             }
             
-            console.log(`🖼️ Memuat ${imageFiles.length} gambar...`);
+            console.log(`Memuat ${imageFiles.length} gambar dengan lazy loading...`);
             
-            // Loop melalui setiap file dan buat elemen galeri
+            // Buat Intersection Observer untuk lazy loading
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const galleryItem = entry.target;
+                        const filename = galleryItem.dataset.filename;
+                        loadImageForGalleryItem(galleryItem, filename);
+                        observer.unobserve(galleryItem);
+                    }
+                });
+            }, {
+                rootMargin: '50px', // Mulai load 50px sebelum masuk viewport
+                threshold: 0.1
+            });
+            
+            // Buat elemen galeri untuk semua gambar
             imageFiles.forEach((filename, index) => {
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
                 galleryItem.dataset.filename = filename;
+                galleryItem.dataset.index = index;
                 
                 galleryItem.innerHTML = `
                     <div class="image-container">
                         <div class="image-placeholder">
-                            <i class="fas fa-spinner fa-spin"></i> Loading ${index + 1}/${imageFiles.length}
+                            <i class="fas fa-image"></i>
                         </div>
                     </div>
                     <div class="file-name">${filename}</div>
@@ -584,7 +537,118 @@
                 
                 galleryContainer.appendChild(galleryItem);
                 
-                // Coba beberapa path untuk kompatibilitas
+                // Event listener untuk membuka popup
+                galleryItem.addEventListener('click', () => {
+                    const possiblePaths = [
+                        BASE_PATH,
+                        `./${BASE_PATH.replace(/^\//, '')}`,
+                        `/${BASE_PATH.replace(/^\//, '')}`,
+                        'download/',
+                        './download/',
+                        '/download/'
+                    ];
+                    
+                    let foundPath = null;
+                    for (const path of possiblePaths) {
+                        const testPath = path + filename;
+                        if (galleryItem.dataset.loadedPath === testPath) {
+                            foundPath = testPath;
+                            break;
+                        }
+                    }
+                    
+                    if (foundPath) {
+                        openPopup(filename, foundPath, foundPath);
+                    } else {
+                        // Coba semua path
+                        openPopup(filename, null, null);
+                    }
+                });
+                
+                // Mulai observe untuk lazy loading
+                observer.observe(galleryItem);
+            });
+        }
+
+        // Fungsi untuk memuat gambar untuk item galeri
+        function loadImageForGalleryItem(galleryItem, filename) {
+            const possiblePaths = [
+                BASE_PATH,
+                `./${BASE_PATH.replace(/^\//, '')}`,
+                `/${BASE_PATH.replace(/^\//, '')}`,
+                'download/',
+                './download/',
+                '/download/'
+            ];
+            
+            let currentPathIndex = 0;
+            
+            function tryNextPath() {
+                if (currentPathIndex >= possiblePaths.length) {
+                    // Semua path gagal
+                    const imageContainer = galleryItem.querySelector('.image-container');
+                    imageContainer.innerHTML = `
+                        <div class="image-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>Gambar tidak ditemukan</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const path = possiblePaths[currentPathIndex];
+                const fullPath = path + filename;
+                
+                const img = new Image();
+                img.className = 'gallery-img';
+                img.src = fullPath;
+                img.alt = filename;
+                img.loading = 'lazy';
+                
+                img.onload = function() {
+                    console.log(`✅ Berhasil: ${filename}`);
+                    const imageContainer = galleryItem.querySelector('.image-container');
+                    imageContainer.innerHTML = '';
+                    imageContainer.appendChild(img);
+                    
+                    // Simpan path yang berhasil
+                    galleryItem.dataset.loadedPath = fullPath;
+                };
+                
+                img.onerror = function() {
+                    currentPathIndex++;
+                    setTimeout(tryNextPath, 100);
+                };
+            }
+            
+            tryNextPath();
+        }
+
+        // Fungsi untuk membuka popup
+        function openPopup(filename, imageSrc, originalSrc) {
+            currentSelectedFile = filename;
+            currentImagePath = imageSrc;
+            originalImagePath = originalSrc;
+            
+            popupFileName.textContent = filename;
+            
+            const popupImageContainer = document.querySelector('.popup-image-container');
+            
+            imagePopup.classList.remove('closing');
+            
+            if (imageSrc) {
+                if (!document.getElementById('popupImage')) {
+                    popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+                    popupImage = document.getElementById('popupImage');
+                }
+                
+                // Gunakan gambar langsung tanpa membuat thumbnail di sisi klien
+                popupImage.src = imageSrc;
+                popupImage.style.display = 'block';
+                popupImage.alt = filename;
+                popupImage.loading = 'eager'; // Prioritaskan loading untuk popup
+            } else {
+                // Coba semua path untuk popup
                 const possiblePaths = [
                     BASE_PATH,
                     `./${BASE_PATH.replace(/^\//, '')}`,
@@ -592,172 +656,93 @@
                     'download/',
                     './download/',
                     '/download/'
-                ].filter((value, index, self) => self.indexOf(value) === index); // Hapus duplikat
+                ];
                 
-                let currentPathIndex = 0;
-                
-                function tryNextPath() {
-                    if (currentPathIndex >= possiblePaths.length) {
-                        // Semua path gagal
-                        console.error(`❌ Semua path gagal untuk: ${filename}`);
-                        const imageContainer = galleryItem.querySelector('.image-container');
-                        imageContainer.innerHTML = `
-                            <div class="image-error">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <div>Gambar tidak ditemukan di GitHub</div>
-                                <div style="font-size:0.7rem; margin-top:5px; color:#aaa;">
-                                    Cek: ${filename}
-                                </div>
-                            </div>
-                        `;
-                        imageContainer.addEventListener('click', () => openPopup(filename, null, null));
-                        return;
-                    }
-                    
-                    const path = possiblePaths[currentPathIndex];
-                    const fullPath = path + filename;
-                    
-                    console.log(`Trying: ${fullPath}`);
-                    
-                    // Simpan path asli
-                    galleryItem.dataset.originalPath = fullPath;
-                    
-                    // Buat thumbnail untuk galeri
-                    createThumbnail(fullPath, filename, function(thumbnailDataUrl) {
-                        if (thumbnailDataUrl) {
-                            console.log(`✅ Thumbnail berhasil: ${filename}`);
-                            const imageContainer = galleryItem.querySelector('.image-container');
-                            const img = document.createElement('img');
-                            img.className = 'gallery-img';
-                            img.src = thumbnailDataUrl;
-                            img.alt = filename;
-                            img.loading = 'lazy'; // Optimasi loading
-                            imageContainer.innerHTML = '';
-                            imageContainer.appendChild(img);
-                            
-                            // Event listener untuk thumbnail di galeri
-                            imageContainer.addEventListener('click', () => {
-                                // Buka popup dengan thumbnail, tapi simpan path asli untuk download
-                                openPopup(filename, thumbnailDataUrl, fullPath);
-                            });
-                        } else {
-                            // Jika gagal buat thumbnail, coba langsung load gambar
-                            const img = new Image();
-                            img.src = fullPath;
-                            img.alt = filename;
-                            
-                            img.onload = function() {
-                                console.log(`✅ Berhasil tanpa thumbnail: ${fullPath}`);
-                                const imageContainer = galleryItem.querySelector('.image-container');
-                                imageContainer.innerHTML = `<img class="gallery-img" src="${fullPath}" alt="${filename}" loading="lazy">`;
-                                
-                                imageContainer.addEventListener('click', () => openPopup(filename, fullPath, fullPath));
-                            };
-                            
-                            img.onerror = function() {
-                                currentPathIndex++;
-                                setTimeout(tryNextPath, 50); // Coba path berikutnya
-                            };
-                        }
-                    });
-                }
-                
-                tryNextPath();
-                
-                // Event listener untuk nama file
-                galleryItem.querySelector('.file-name').addEventListener('click', function() {
-                    const originalPath = galleryItem.dataset.originalPath;
-                    if (originalPath) {
-                        // Buat thumbnail untuk popup
-                        createThumbnail(originalPath, filename, function(thumbnailDataUrl) {
-                            openPopup(filename, thumbnailDataUrl || originalPath, originalPath);
-                        });
-                    } else {
-                        openPopup(filename, null, null);
-                    }
-                });
-            });
-        }
-
-        // Fungsi untuk membuka popup dengan animasi
-        function openPopup(filename, thumbnailSrc, originalSrc) {
-            currentSelectedFile = filename;
-            currentImagePath = thumbnailSrc; // Untuk tampilan di popup
-            originalImagePath = originalSrc; // Untuk download
-            
-            popupFileName.textContent = filename;
-            
-            const popupImageContainer = document.querySelector('.popup-image-container');
-            
-            // Hapus class closing jika ada
-            imagePopup.classList.remove('closing');
-            
-            // Tambahkan state ke history untuk mengontrol tombol kembali
-            popupHistoryState = { popupOpen: true };
-            history.pushState(popupHistoryState, '');
-            
-            if (thumbnailSrc) {
-                // Pastikan elemen popupImage ada
-                if (!document.getElementById('popupImage')) {
-                    popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
-                    popupImage = document.getElementById('popupImage');
-                }
-                popupImage.src = thumbnailSrc;
-                popupImage.style.display = 'block';
-                popupImage.alt = filename;
-            } else {
                 popupImageContainer.innerHTML = `
                     <div style="color: #ff6b6b; font-size: 1.1rem; text-align: center; padding: 40px;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i><br>
-                        <strong>FILE TIDAK DITEMUKAN DI GITHUB</strong><br><br>
-                        <div style="font-size: 0.9rem; color: #aaa; background: rgba(40, 40, 40, 0.95); padding: 15px; border-radius: 5px; backdrop-filter: blur(3px); border: 1px solid rgba(255, 255, 255, 0.15);">
-                            File: <strong>${filename}</strong><br>
-                            Path yang dicoba: <strong>${BASE_PATH}</strong><br><br>
-                            <div style="font-size: 0.8rem; color: #888;">
-                                <strong>Solusi untuk GitHub:</strong><br>
-                                1. Pastikan folder "download" ada di root repository<br>
-                                2. Pastikan file ${filename} ada di folder "download"<br>
-                                3. Pastikan GitHub Pages sudah diaktifkan (Settings → Pages)<br>
-                                4. Tunggu 1-2 menit setelah upload<br>
-                                5. Cek URL GitHub Pages: ${window.location.origin}${BASE_PATH}${filename}
-                            </div>
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 20px;"></i><br>
+                        <strong>MEMUAT GAMBAR...</strong><br><br>
+                        <div style="font-size: 0.9rem; color: #aaa;">
+                            File: <strong>${filename}</strong>
                         </div>
                     </div>
                 `;
+                
+                // Coba load gambar untuk popup
+                let popupPathIndex = 0;
+                function tryPopupPath() {
+                    if (popupPathIndex >= possiblePaths.length) {
+                        popupImageContainer.innerHTML = `
+                            <div style="color: #ff6b6b; font-size: 1.1rem; text-align: center; padding: 40px;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i><br>
+                                <strong>FILE TIDAK DITEMUKAN DI GITHUB</strong><br><br>
+                                <div style="font-size: 0.9rem; color: #aaa;">
+                                    File: <strong>${filename}</strong><br>
+                                    Pastikan file ada di folder "download"
+                                </div>
+                            </div>
+                        `;
+                        originalImagePath = null;
+                        return;
+                    }
+                    
+                    const path = possiblePaths[popupPathIndex];
+                    const fullPath = path + filename;
+                    
+                    const testImg = new Image();
+                    testImg.onload = function() {
+                        if (!document.getElementById('popupImage')) {
+                            popupImageContainer.innerHTML = '<img class="popup-image" id="popupImage" alt="Preview Gambar">';
+                            popupImage = document.getElementById('popupImage');
+                        }
+                        popupImage.src = fullPath;
+                        popupImage.style.display = 'block';
+                        popupImage.alt = filename;
+                        currentImagePath = fullPath;
+                        originalImagePath = fullPath;
+                    };
+                    
+                    testImg.onerror = function() {
+                        popupPathIndex++;
+                        setTimeout(tryPopupPath, 100);
+                    };
+                    
+                    testImg.src = fullPath;
+                }
+                
+                tryPopupPath();
             }
             
             imagePopup.style.display = 'flex';
         }
 
-        // Fungsi untuk menutup popup dengan animasi
+        // Fungsi untuk menutup popup
         function closePopup() {
-            // Hapus state dari history jika popup sedang terbuka
-            if (popupHistoryState && popupHistoryState.popupOpen) {
-                history.back();
-            }
-            
             imagePopup.classList.add('closing');
             
-            // Tunggu animasi selesai sebelum menyembunyikan
             setTimeout(() => {
                 imagePopup.style.display = 'none';
                 imagePopup.classList.remove('closing');
                 currentSelectedFile = '';
                 currentImagePath = '';
                 originalImagePath = '';
-                popupHistoryState = null;
-            }, 300); // Sesuaikan dengan durasi animasi
+                
+                // Hentikan loading gambar di popup jika masih berjalan
+                if (popupImage) {
+                    popupImage.src = '';
+                }
+            }, 300);
         }
 
-        // Fungsi untuk mendownload gambar ASLI
+        // Fungsi untuk mendownload gambar
         function downloadImage() {
             if (!currentSelectedFile || !originalImagePath) {
-                alert('Tidak dapat mendownload. File tidak ditemukan di server GitHub.');
+                alert('Tidak dapat mendownload. File tidak ditemukan.');
                 return;
             }
             
             const link = document.createElement('a');
-            link.href = originalImagePath; // Gunakan path asli, bukan thumbnail
+            link.href = originalImagePath;
             link.download = currentSelectedFile;
             
             document.body.appendChild(link);
@@ -768,8 +753,6 @@
         // Event Listeners
         downloadBtn.addEventListener('click', downloadImage);
         
-        // Tombol kembali telah dihapus sesuai permintaan
-
         // Tutup popup saat klik di luar konten
         imagePopup.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -782,39 +765,34 @@
             if (e.key === 'Escape' && imagePopup.style.display === 'flex') {
                 closePopup();
             }
-        });
-
-        // Handle tombol kembali browser
-        window.addEventListener('popstate', function(event) {
-            if (popupHistoryState && popupHistoryState.popupOpen && imagePopup.style.display === 'flex') {
-                // Tutup popup tanpa kembali ke halaman sebelumnya
-                event.preventDefault();
-                event.stopPropagation();
-                
-                imagePopup.classList.add('closing');
-                setTimeout(() => {
-                    imagePopup.style.display = 'none';
-                    imagePopup.classList.remove('closing');
-                    currentSelectedFile = '';
-                    currentImagePath = '';
-                    originalImagePath = '';
-                    popupHistoryState = null;
-                    
-                    // Tambahkan state kembali untuk mencegah navigasi
-                    history.pushState({}, '');
-                }, 300);
+            
+            // Mencegah tombol kembali browser menutup popup (sesuai permintaan)
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
             }
         });
+
+        // Mencegah popstate (tombol kembali) menutup popup
+        window.addEventListener('popstate', function(e) {
+            // Cegah navigasi kembali jika popup terbuka
+            if (imagePopup.style.display === 'flex') {
+                history.pushState(null, '', window.location.pathname);
+            }
+        });
+
+        // Push state awal untuk mencegah navigasi kembali ke halaman kosong
+        history.replaceState(null, '', window.location.pathname);
 
         // Jalankan fungsi memuat galeri saat halaman dimuat
         document.addEventListener('DOMContentLoaded', loadGallery);
         
-        console.log('=== GITHUB PAGES DEBUG INFO ===');
-        console.log('URL Saat Ini:', window.location.href);
-        console.log('Hostname:', window.location.hostname);
-        console.log('Pathname:', window.location.pathname);
-        console.log('Base Path:', BASE_PATH);
-        console.log('==============================');
+        // Hentikan observer saat halaman ditutup
+        window.addEventListener('beforeunload', () => {
+            if (observer) {
+                observer.disconnect();
+            }
+        });
     </script>
 </body>
-    </html>
+</html>
